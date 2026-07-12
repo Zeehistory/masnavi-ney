@@ -10,8 +10,6 @@
     body: document.getElementById("readerBody"),
     search: document.getElementById("tocSearch"),
     progress: document.getElementById("progress"),
-    spineFill: document.getElementById("spineFill"),
-    spineHoles: null,
     statChapters: document.getElementById("stat-chapters"),
     statWords: document.getElementById("stat-words"),
     crumb: document.getElementById("readerCrumb"),
@@ -158,7 +156,6 @@
 
     el.body.innerHTML = html;
     if (el.crumb) el.crumb.textContent = ch.title;
-    el.spineHoles = el.reader.querySelectorAll(".spine__hole");
     show(el.reader);
     window.scrollTo(0, 0);
     updateProgress();
@@ -170,11 +167,6 @@
     const scrollable = doc.scrollHeight - doc.clientHeight;
     const pct = scrollable > 0 ? Math.min(1, doc.scrollTop / scrollable) : 0;
     el.progress.style.width = (pct * 100) + "%";
-    if (el.spineFill) el.spineFill.style.height = (pct * 100) + "%";
-    if (el.spineHoles) {
-      const holes = [0.15, 0.35, 0.55, 0.75, 0.95];
-      el.spineHoles.forEach((h, i) => h.classList.toggle("lit", pct >= holes[i]));
-    }
   }
 
   // -- Keyboard: ← / → chapters, Esc closes drawer -------------------------
