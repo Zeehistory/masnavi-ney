@@ -81,7 +81,7 @@
     const next = BOOK.chapters[idx + 1];
 
     let html = "";
-    html += '<div class="chapter__eyebrow">Teaching ' + romanish(idx + 1) +
+    html += '<div class="chapter__eyebrow">Chapter ' + (idx + 1) +
             " of " + BOOK.chapters.length + "</div>";
     html += '<h1 class="chapter__title">' + escapeHTML(ch.title) + "</h1>";
     if (ch.subtitle) html += '<p class="chapter__sub">' + escapeHTML(ch.subtitle) + "</p>";
@@ -105,8 +105,8 @@
       html += '<a class="next" href="#read/' + next.id + '"><span class="dir">Next →</span>' +
               '<span class="name">' + escapeHTML(next.title) + "</span></a>";
     } else {
-      html += '<a class="next" href="#contents"><span class="dir">Finis →</span>' +
-              '<span class="name">Return to contents</span></a>';
+      html += '<a class="next" href="#contents"><span class="dir">End →</span>' +
+              '<span class="name">Back to contents</span></a>';
     }
     html += "</nav>";
 
