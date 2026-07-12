@@ -3,7 +3,8 @@
   "use strict";
 
   const el = {
-    hero: document.getElementById("hero"),
+    hero: document.getElementById("hero"),      // the home/library view
+    books: document.getElementById("books"),
     contents: document.getElementById("contents"),
     reader: document.getElementById("reader"),
     toc: document.getElementById("toc"),
@@ -11,7 +12,6 @@
     search: document.getElementById("tocSearch"),
     progress: document.getElementById("progress"),
     statChapters: document.getElementById("stat-chapters"),
-    statWords: document.getElementById("stat-words"),
     crumb: document.getElementById("readerCrumb"),
     // drawer
     drawer: document.getElementById("drawer"),
@@ -27,6 +27,45 @@
 
   const fmt = (n) => n.toLocaleString("en-US");
   const pad2 = (n) => String(n).padStart(2, "0");
+
+  // The six Books (daftars) of the Masnavī. Only Book One has text so far.
+  const DAFTARS = [
+    { n: 1, name: "Book One",   ar: "دفتر اول",  desc: "The reed's lament, the king and the maid, and the parables of the soul's return.", live: true },
+    { n: 2, name: "Book Two",   ar: "دفتر دوم",  desc: "On companionship, sincerity, and the trials of the seeker.", live: false },
+    { n: 3, name: "Book Three", ar: "دفتر سوم",  desc: "Knowledge, striving, and the wisdom hidden in hardship.", live: false },
+    { n: 4, name: "Book Four",  ar: "دفتر چهارم", desc: "Love as the astrolabe of the mysteries of God.", live: false },
+    { n: 5, name: "Book Five",  ar: "دفتر پنجم", desc: "Discipline of the self and the stations of the heart.", live: false },
+    { n: 6, name: "Book Six",   ar: "دفتر ششم",  desc: "The final ascent — union, and the return of the reed to the reed-bed.", live: false },
+  ];
+
+  function buildBooks() {
+    const frag = document.createDocumentFragment();
+    DAFTARS.forEach((d) => {
+      const li = document.createElement("li");
+      li.className = "book " + (d.live ? "book--live" : "book--soon");
+      const status = d.live
+        ? '<span class="book__status">' + BOOK.chapters.length + " chapters →</span>"
+        : '<span class="book__status">Coming soon</span>';
+      li.innerHTML =
+        '<span class="book__num">' + d.n + "</span>" +
+        '<div class="book__meta">' +
+          '<p class="book__name">' + d.name +
+            '<span class="book__ar" lang="ar" dir="rtl">' + d.ar + "</span></p>" +
+          '<p class="book__desc">' + escapeHTML(d.desc) + "</p>" +
+        "</div>" + status;
+      if (d.live) {
+        li.tabIndex = 0;
+        li.setAttribute("role", "link");
+        const go = () => { location.hash = "#contents"; };
+        li.addEventListener("click", go);
+        li.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+        });
+      }
+      frag.appendChild(li);
+    });
+    el.books.appendChild(frag);
+  }
 
   // -- Views ---------------------------------------------------------------
   function show(view) {
@@ -196,11 +235,8 @@
     .then((r) => r.json())
     .then((data) => {
       BOOK = data;
-      if (el.statChapters) el.statChapters.textContent = BOOK.chapters.length;
-      if (el.statWords) {
-        const words = BOOK.chapters.reduce((s, c) => s + c.words, 0);
-        el.statWords.textContent = fmt(Math.round(words / 1000) * 1000);
-      }
+      if (el.statChapters) el.statChapters.textContent = "· " + BOOK.chapters.length + " chapters";
+      buildBooks();
       buildTOC();
       buildDrawer();
       route();

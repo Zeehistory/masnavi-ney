@@ -7,37 +7,31 @@
 <meta name="description" content="Jalāl al-Dīn Rūmī's Masnavī, Book One, in English.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Amiri:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="starfield" aria-hidden="true"></div>
 
-<!-- HERO -->
-<header class="hero" id="hero">
-  <p class="bismillah" lang="ar" dir="rtl" title="In the name of God, the Most Gracious, the Most Merciful">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
-  <div class="hero__center">
-    <span class="eyebrow">Jalāl al-Dīn Rūmī</span>
-    <h1 class="hero__title">The Masnavī<span class="sub">Book One</span></h1>
-    <blockquote class="hero__verse">
-      <span class="line">Listen to the reed, how it tells its tale,</span>
-      <span class="line">complaining of separations — saying,</span>
-      <span class="line">“Ever since I was cut from the reed-bed…”</span>
-    </blockquote>
-  </div>
+<!-- HOME — the library of the six Books (Daftars) -->
+<main class="home" id="hero">
+  <header class="home__head">
+    <p class="bismillah" lang="ar" dir="rtl" title="In the name of God, the Most Gracious, the Most Merciful">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+    <h1 class="home__title">The Masnavī</h1>
+    <p class="home__by">Jalāl al-Dīn Rūmī · a translation &amp; commentary</p>
+    <p class="home__lede">The Masnavī-yi Ma‘navī is composed in six books (daftars) of rhyming couplets — some twenty-five thousand verses of stories, teaching, and the longing of the reed for its reed-bed. Choose a book to begin.</p>
+  </header>
 
-  <div class="hero__bottom">
-    <div class="hero__meta">
-      <span><b id="stat-chapters">182</b> chapters</span>
-    </div>
-    <a class="enter" href="#contents" id="enterBtn">Read <span class="arrow">→</span></a>
-  </div>
-</header>
+  <ul class="books" id="books"></ul>
 
-<!-- CONTENTS -->
+  <p class="home__foot">Translation and commentary of Book One. Further books in preparation.</p>
+</main>
+
+<!-- CONTENTS — Book One's chapters -->
 <main class="contents is-hidden" id="contents">
   <div class="contents__head">
-    <h2>The Masnavī, Book One</h2>
+    <a class="contents__back" href="#hero">← All books</a>
+    <h2>Book One<span class="contents__count" id="stat-chapters"></span></h2>
     <label class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="search" id="tocSearch" placeholder="Search chapters…" aria-label="Search chapters">
