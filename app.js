@@ -1,4 +1,4 @@
-/* Ney — reader logic. Vanilla JS, no dependencies. */
+/* The Masnavī, Book One — reader logic. Vanilla JS, no dependencies. */
 (function () {
   "use strict";
 
@@ -14,12 +14,21 @@
     spineHoles: null,
     statChapters: document.getElementById("stat-chapters"),
     statWords: document.getElementById("stat-words"),
+    crumb: document.getElementById("readerCrumb"),
+    // drawer
+    drawer: document.getElementById("drawer"),
+    drawerScrim: document.getElementById("drawerScrim"),
+    drawerList: document.getElementById("drawerList"),
+    drawerSearch: document.getElementById("drawerSearch"),
+    openDrawer: document.getElementById("openDrawer"),
+    closeDrawer: document.getElementById("closeDrawer"),
   };
 
   let BOOK = null;
+  let currentIdx = -1;   // index of chapter currently open in the reader
 
   const fmt = (n) => n.toLocaleString("en-US");
-  const romanish = (n) => String(n).padStart(2, "0");
+  const pad2 = (n) => String(n).padStart(2, "0");
 
   // -- Views ---------------------------------------------------------------
   function show(view) {
@@ -45,38 +54,76 @@
   // -- Contents ------------------------------------------------------------
   function buildTOC() {
     const frag = document.createDocumentFragment();
-    let folio = 1;
     BOOK.chapters.forEach((ch, i) => {
       const a = document.createElement("a");
       a.href = "#read/" + ch.id;
       a.className = "toc__item";
       a.dataset.text = (ch.title + " " + (ch.subtitle || "")).toLowerCase();
       a.innerHTML =
-        '<span class="toc__num">' + romanish(i + 1) + "</span>" +
+        '<span class="toc__num">' + pad2(i + 1) + "</span>" +
         '<span class="toc__body"><span class="toc__title">' + escapeHTML(ch.title) + "</span>" +
         (ch.subtitle ? '<span class="toc__sub">' + escapeHTML(ch.subtitle) + "</span>" : "") +
         "</span>" +
-        '<span class="toc__folio">p. ' + folio + "</span>";
+        '<span class="toc__folio">' + pad2(i + 1) + " / " + BOOK.chapters.length + "</span>";
       frag.appendChild(a);
-      folio += Math.max(1, Math.round(ch.words / 320));
     });
     el.toc.appendChild(frag);
   }
 
-  function filterTOC(q) {
+  function filterList(container, sel, q) {
     q = q.trim().toLowerCase();
-    el.toc.querySelectorAll(".toc__item").forEach((item) => {
+    container.querySelectorAll(sel).forEach((item) => {
       const match = !q || item.dataset.text.indexOf(q) !== -1;
       item.classList.toggle("is-hidden", !match);
     });
   }
 
+  // -- Drawer (persistent navigator) --------------------------------------
+  function buildDrawer() {
+    const frag = document.createDocumentFragment();
+    BOOK.chapters.forEach((ch, i) => {
+      const a = document.createElement("a");
+      a.href = "#read/" + ch.id;
+      a.className = "drawer__row";
+      a.dataset.idx = i;
+      a.dataset.text = (ch.title + " " + (ch.subtitle || "")).toLowerCase();
+      a.innerHTML =
+        '<span class="drawer__rnum">' + pad2(i + 1) + "</span>" +
+        '<span class="drawer__rtitle">' + escapeHTML(ch.title) + "</span>";
+      a.addEventListener("click", closeDrawer);
+      frag.appendChild(a);
+    });
+    el.drawerList.appendChild(frag);
+  }
+
+  function markCurrentInDrawer() {
+    el.drawerList.querySelectorAll(".drawer__row").forEach((row) => {
+      row.classList.toggle("is-current", Number(row.dataset.idx) === currentIdx);
+    });
+  }
+
+  function openDrawer() {
+    el.drawer.classList.add("is-open");
+    el.drawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    markCurrentInDrawer();
+    const cur = el.drawerList.querySelector(".is-current");
+    if (cur) cur.scrollIntoView({ block: "center" });
+    setTimeout(() => el.drawerSearch.focus(), 60);
+  }
+  function closeDrawer() {
+    el.drawer.classList.remove("is-open");
+    el.drawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
   // -- Reader --------------------------------------------------------------
   function openChapter(id) {
     const ch = BOOK.chapters.find((c) => c.id === id);
-    if (!ch) { show(el.contents); return; }
+    if (!ch) { location.hash = "#contents"; return; }
 
     const idx = BOOK.chapters.indexOf(ch);
+    currentIdx = idx;
     const prev = BOOK.chapters[idx - 1];
     const next = BOOK.chapters[idx + 1];
 
@@ -93,7 +140,6 @@
       html += "</section>";
     });
 
-    // nav
     html += '<nav class="chapter__nav">';
     if (prev) {
       html += '<a class="prev" href="#read/' + prev.id + '"><span class="dir">← Previous</span>' +
@@ -111,6 +157,7 @@
     html += "</nav>";
 
     el.body.innerHTML = html;
+    if (el.crumb) el.crumb.textContent = ch.title;
     el.spineHoles = el.reader.querySelectorAll(".spine__hole");
     show(el.reader);
     window.scrollTo(0, 0);
@@ -127,6 +174,22 @@
     if (el.spineHoles) {
       const holes = [0.15, 0.35, 0.55, 0.75, 0.95];
       el.spineHoles.forEach((h, i) => h.classList.toggle("lit", pct >= holes[i]));
+    }
+  }
+
+  // -- Keyboard: ← / → chapters, Esc closes drawer -------------------------
+  function onKey(e) {
+    if (e.key === "Escape" && el.drawer.classList.contains("is-open")) {
+      closeDrawer(); return;
+    }
+    // don't hijack arrows while typing in a field
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+    if (el.reader.classList.contains("is-hidden")) return;
+    if (e.key === "ArrowRight" && currentIdx < BOOK.chapters.length - 1) {
+      location.hash = "#read/" + BOOK.chapters[currentIdx + 1].id;
+    } else if (e.key === "ArrowLeft" && currentIdx > 0) {
+      location.hash = "#read/" + BOOK.chapters[currentIdx - 1].id;
     }
   }
 
@@ -147,15 +210,21 @@
         el.statWords.textContent = fmt(Math.round(words / 1000) * 1000);
       }
       buildTOC();
+      buildDrawer();
       route();
     })
     .catch((err) => {
       el.hero.insertAdjacentHTML("beforeend",
-        '<p style="color:#a63d2e;font-family:monospace">Could not load the book (' +
+        '<p style="color:#f2cf6b;font-family:monospace">Could not load the book (' +
         escapeHTML(err.message) + "). Serve this folder over http, not file://.</p>");
     });
 
   window.addEventListener("hashchange", route);
   window.addEventListener("scroll", updateProgress, { passive: true });
-  el.search.addEventListener("input", (e) => filterTOC(e.target.value));
+  window.addEventListener("keydown", onKey);
+  el.search.addEventListener("input", (e) => filterList(el.toc, ".toc__item", e.target.value));
+  el.drawerSearch.addEventListener("input", (e) => filterList(el.drawerList, ".drawer__row", e.target.value));
+  el.openDrawer.addEventListener("click", openDrawer);
+  el.closeDrawer.addEventListener("click", closeDrawer);
+  el.drawerScrim.addEventListener("click", closeDrawer);
 })();
