@@ -1,25 +1,25 @@
 /* ==========================================================================
    The Masnavī of Jalāl al-Dīn Rūmī, Book One — a reading experience
-   Palette: night, reed, and lamplight.
+   Palette: İznik — Ottoman ceramic cobalt, turquoise, coral, and saffron.
    ========================================================================== */
 
 :root {
-  /* Ground & surfaces */
-  --night:      #141b2e;   /* deep indigo — the Konya night */
-  --night-2:    #1b2338;   /* raised panels */
-  --night-3:    #232c45;   /* hover / borders */
-  --parchment:  #f4ede0;   /* the reading surface */
-  --parchment-2:#efe6d4;
+  /* Ground & surfaces — İznik cobalt */
+  --night:      #0b2e52;   /* saraylı cobalt — the deep tile blue */
+  --night-2:    #103a63;   /* raised panels */
+  --night-3:    #1b4f7d;   /* hover / borders */
+  --parchment:  #faf6ec;   /* tile-white slip — the reading surface */
+  --parchment-2:#efe7d2;
 
   /* Ink & voices */
-  --ink:        #23201a;   /* body text on parchment */
-  --ink-soft:   #524b3d;   /* secondary on parchment */
-  --gold:       #c9a24b;   /* lamplight — the one accent */
-  --gold-soft:  #e3c988;
-  --slate:      #7d8aa5;   /* muted text on night */
-  --slate-dim:  #4f5872;
-  --madder:     #a63d2e;   /* rare emphasis (madder-red) */
-  --cream-dim:  #cfc6b4;   /* text on night, warm */
+  --ink:        #10293c;   /* deep teal-ink body text */
+  --ink-soft:   #3f5f70;   /* secondary on tile-white */
+  --gold:       #e0a92e;   /* saffron gold — the accent */
+  --gold-soft:  #f2cf6b;
+  --slate:      #4bb0bd;   /* İznik turquoise — muted text on cobalt */
+  --slate-dim:  #2c7d8c;
+  --madder:     #c1272d;   /* İznik coral-red — rare emphasis */
+  --cream-dim:  #dce9ec;   /* pale turquoise-white text on cobalt */
 
   /* Type */
   --display: "Gilda Display", serif;
@@ -51,21 +51,19 @@ body {
   overflow-x: hidden;
 }
 
-::selection { background: rgba(201,162,75,.28); color: #fff; }
+::selection { background: rgba(224,169,46,.32); color: #fff; }
 
 a { color: inherit; text-decoration: none; }
 
-/* Faint field of stars / dust over the night ground */
+/* İznik geometric lattice — 8-pointed stars (khatim) over the cobalt ground.
+   An SVG tile in turquoise + saffron, repeated. */
 .starfield {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(227,201,136,.25), transparent),
-    radial-gradient(1px 1px at 70% 60%, rgba(227,201,136,.18), transparent),
-    radial-gradient(1px 1px at 45% 80%, rgba(255,255,255,.12), transparent),
-    radial-gradient(1.5px 1.5px at 85% 20%, rgba(227,201,136,.15), transparent),
-    radial-gradient(1px 1px at 12% 72%, rgba(255,255,255,.10), transparent);
-  background-repeat: no-repeat;
-  opacity: .8;
+  opacity: .5;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234bb0bd' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%23e0a92e' stroke-opacity='0.6'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%23e0a92e'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px;
 }
 
 /* ==========================================================================
@@ -283,7 +281,7 @@ a { color: inherit; text-decoration: none; }
 /* subtle paper grain */
 .reader::before {
   content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image: radial-gradient(circle at 50% 0, rgba(201,162,75,.05), transparent 60%);
+  background-image: radial-gradient(circle at 50% 0, rgba(75,176,189,.08), transparent 60%);
 }
 
 .reader__bar {
@@ -399,7 +397,7 @@ a { color: inherit; text-decoration: none; }
 }
 .chapter__nav a {
   display: grid; gap: .35rem; padding: 1.2rem 1.4rem;
-  background: rgba(20,27,46,.03); border: 1px solid var(--parchment-2);
+  background: rgba(11,46,82,.03); border: 1px solid var(--parchment-2);
   border-radius: 8px;
   transition: border-color .3s var(--ease), transform .3s var(--ease);
 }

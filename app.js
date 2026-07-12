@@ -141,9 +141,11 @@
     .then((r) => r.json())
     .then((data) => {
       BOOK = data;
-      const words = BOOK.chapters.reduce((s, c) => s + c.words, 0);
-      el.statChapters.textContent = BOOK.chapters.length;
-      el.statWords.textContent = fmt(Math.round(words / 1000) * 1000);
+      if (el.statChapters) el.statChapters.textContent = BOOK.chapters.length;
+      if (el.statWords) {
+        const words = BOOK.chapters.reduce((s, c) => s + c.words, 0);
+        el.statWords.textContent = fmt(Math.round(words / 1000) * 1000);
+      }
       buildTOC();
       route();
     })
