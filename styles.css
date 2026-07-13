@@ -30,14 +30,16 @@
   --madder:     #c8763a;   /* rare warm terracotta emphasis */
   --cream-dim:  #eaf5f1;   /* near-white text on the dome */
 
-  /* Warm bright accent for TEXT sitting on the green ground — a soft antique
-     gold, the color of the calligraphy's ground. High contrast, legible. */
-  --warm:       #ecc98a;
-  --warm-soft:  #f5ddaf;
+  /* Secondary accent — the warm fired-brick terracotta of the Mevlâna
+     minaret in Konya (its clay body, beneath the turquoise tile bands).
+     Used for text and detail on the green ground. */
+  --warm:       #c47f56;   /* minaret brick-terracotta */
+  --warm-soft:  #d99a72;   /* lighter clay for hover/highlights */
 
-  /* Type — a naskh-flavored Latin display (Gulzar) that carries manuscript
-     DNA, a warm reading serif, and Arabic naskh for verse/calligraphy. */
-  --display: "Gulzar", "Amiri", Georgia, serif;
+  /* Type — Mirza, a nastaʿlīq-inspired Latin display with genuine Persianate
+     calligraphic DNA (rarely seen on the web); a warm reading serif; and
+     Arabic naskh for verse & calligraphy. */
+  --display: "Mirza", "Amiri", Georgia, serif;
   --verse:   "Amiri", serif;
   --body:    "Spectral", Georgia, serif;
   --label:   "Spectral", Georgia, serif;   /* labels are just quiet body type */
@@ -70,18 +72,17 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-/* Geometric lattice — 8-pointed stars (khatim) in the dome-green, over the
-   deep ground. A whisper, masked away from the reading column. */
+/* İznik girih lattice — an intricate tessellation of interlaced 8-point
+   stars and octagons. Present but calm; brighter at the edges. */
 .starfield {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: .12;                /* a whisper — never competes with text */
+  opacity: .5;
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23f4efe0' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%236ba69c' stroke-opacity='0.7'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%236ba69c'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke-width='0.8'%3E%3Cpath d='M50.0,20.0 55.0,38.0 71.2,28.8 62.0,45.0 80.0,50.0 62.0,55.0 71.2,71.2 55.0,62.0 50.0,80.0 45.0,62.0 28.8,71.2 38.0,55.0 20.0,50.0 38.0,45.0 28.8,28.8 45.0,38.0Z' stroke='%23bcd8cf'/%3E%3Cpath d='M0.0,-30.0 5.0,-12.0 21.2,-21.2 12.0,-5.0 30.0,0.0 12.0,5.0 21.2,21.2 5.0,12.0 0.0,30.0 -5.0,12.0 -21.2,21.2 -12.0,5.0 -30.0,0.0 -12.0,-5.0 -21.2,-21.2 -5.0,-12.0Z' stroke='%23bcd8cf'/%3E%3Cpath d='M100.0,-30.0 105.0,-12.0 121.2,-21.2 112.0,-5.0 130.0,0.0 112.0,5.0 121.2,21.2 105.0,12.0 100.0,30.0 95.0,12.0 78.8,21.2 88.0,5.0 70.0,0.0 88.0,-5.0 78.8,-21.2 95.0,-12.0Z' stroke='%23bcd8cf'/%3E%3Cpath d='M0.0,70.0 5.0,88.0 21.2,78.8 12.0,95.0 30.0,100.0 12.0,105.0 21.2,121.2 5.0,112.0 0.0,130.0 -5.0,112.0 -21.2,121.2 -12.0,105.0 -30.0,100.0 -12.0,95.0 -21.2,78.8 -5.0,88.0Z' stroke='%23bcd8cf'/%3E%3Cpath d='M100.0,70.0 105.0,88.0 121.2,78.8 112.0,95.0 130.0,100.0 112.0,105.0 121.2,121.2 105.0,112.0 100.0,130.0 95.0,112.0 78.8,121.2 88.0,105.0 70.0,100.0 88.0,95.0 78.8,78.8 95.0,88.0Z' stroke='%23bcd8cf'/%3E%3Cpath d='M50.0,-22.0 53.4,-8.3 65.6,-15.6 58.3,-3.4 72.0,0.0 58.3,3.4 65.6,15.6 53.4,8.3 50.0,22.0 46.6,8.3 34.4,15.6 41.7,3.4 28.0,0.0 41.7,-3.4 34.4,-15.6 46.6,-8.3Z' stroke='%23bcd8cf'/%3E%3Cpath d='M0.0,28.0 3.4,41.7 15.6,34.4 8.3,46.6 22.0,50.0 8.3,53.4 15.6,65.6 3.4,58.3 0.0,72.0 -3.4,58.3 -15.6,65.6 -8.3,53.4 -22.0,50.0 -8.3,46.6 -15.6,34.4 -3.4,41.7Z' stroke='%23bcd8cf'/%3E%3Cpath d='M100.0,28.0 103.4,41.7 115.6,34.4 108.3,46.6 122.0,50.0 108.3,53.4 115.6,65.6 103.4,58.3 100.0,72.0 96.6,58.3 84.4,65.6 91.7,53.4 78.0,50.0 91.7,46.6 84.4,34.4 96.6,41.7Z' stroke='%23bcd8cf'/%3E%3Cpath d='M50.0,78.0 53.4,91.7 65.6,84.4 58.3,96.6 72.0,100.0 58.3,103.4 65.6,115.6 53.4,108.3 50.0,122.0 46.6,108.3 34.4,115.6 41.7,103.4 28.0,100.0 41.7,96.6 34.4,84.4 46.6,91.7Z' stroke='%23bcd8cf'/%3E%3Cpath d='M81.4,63.0 63.0,81.4 37.0,81.4 18.6,63.0 18.6,37.0 37.0,18.6 63.0,18.6 81.4,37.0Z' stroke='%23c47f56' stroke-opacity='0.75'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
-  background-size: 200px 200px;
-  /* fade the pattern toward the center so reading columns stay clean */
-  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, transparent 35%, #000 100%);
-  mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, transparent 35%, #000 100%);
+  background-size: 340px 340px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 95% at 50% 45%, rgba(0,0,0,.35) 0%, #000 80%);
+  mask-image: radial-gradient(ellipse 90% 95% at 50% 45%, rgba(0,0,0,.35) 0%, #000 80%);
 }
 
 /* ==========================================================================
@@ -151,12 +152,6 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--body); font-size: 1rem; color: var(--warm);
   margin-top: .15rem;
 }
-.home__lede {
-  font-family: var(--body);
-  font-size: clamp(1rem, 2vw, 1.1rem); line-height: 1.7;
-  color: var(--slate); max-width: 40rem; margin: 0 auto;
-}
-
 /* The six Books, as a calm list of cards */
 .books {
   list-style: none; margin: 0; padding: 0;
@@ -307,7 +302,11 @@ a { color: inherit; text-decoration: none; }
 /* subtle paper grain */
 .reader::before {
   content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image: radial-gradient(circle at 50% 0, rgba(75,176,189,.08), transparent 60%);
+  opacity: .4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke-width='0.8'%3E%3Cpath d='M50.0,20.0 55.0,38.0 71.2,28.8 62.0,45.0 80.0,50.0 62.0,55.0 71.2,71.2 55.0,62.0 50.0,80.0 45.0,62.0 28.8,71.2 38.0,55.0 20.0,50.0 38.0,45.0 28.8,28.8 45.0,38.0Z' stroke='%23a9cabf'/%3E%3Cpath d='M0.0,-30.0 5.0,-12.0 21.2,-21.2 12.0,-5.0 30.0,0.0 12.0,5.0 21.2,21.2 5.0,12.0 0.0,30.0 -5.0,12.0 -21.2,21.2 -12.0,5.0 -30.0,0.0 -12.0,-5.0 -21.2,-21.2 -5.0,-12.0Z' stroke='%23a9cabf'/%3E%3Cpath d='M100.0,-30.0 105.0,-12.0 121.2,-21.2 112.0,-5.0 130.0,0.0 112.0,5.0 121.2,21.2 105.0,12.0 100.0,30.0 95.0,12.0 78.8,21.2 88.0,5.0 70.0,0.0 88.0,-5.0 78.8,-21.2 95.0,-12.0Z' stroke='%23a9cabf'/%3E%3Cpath d='M0.0,70.0 5.0,88.0 21.2,78.8 12.0,95.0 30.0,100.0 12.0,105.0 21.2,121.2 5.0,112.0 0.0,130.0 -5.0,112.0 -21.2,121.2 -12.0,105.0 -30.0,100.0 -12.0,95.0 -21.2,78.8 -5.0,88.0Z' stroke='%23a9cabf'/%3E%3Cpath d='M100.0,70.0 105.0,88.0 121.2,78.8 112.0,95.0 130.0,100.0 112.0,105.0 121.2,121.2 105.0,112.0 100.0,130.0 95.0,112.0 78.8,121.2 88.0,105.0 70.0,100.0 88.0,95.0 78.8,78.8 95.0,88.0Z' stroke='%23a9cabf'/%3E%3Cpath d='M50.0,-22.0 53.4,-8.3 65.6,-15.6 58.3,-3.4 72.0,0.0 58.3,3.4 65.6,15.6 53.4,8.3 50.0,22.0 46.6,8.3 34.4,15.6 41.7,3.4 28.0,0.0 41.7,-3.4 34.4,-15.6 46.6,-8.3Z' stroke='%23a9cabf'/%3E%3Cpath d='M0.0,28.0 3.4,41.7 15.6,34.4 8.3,46.6 22.0,50.0 8.3,53.4 15.6,65.6 3.4,58.3 0.0,72.0 -3.4,58.3 -15.6,65.6 -8.3,53.4 -22.0,50.0 -8.3,46.6 -15.6,34.4 -3.4,41.7Z' stroke='%23a9cabf'/%3E%3Cpath d='M100.0,28.0 103.4,41.7 115.6,34.4 108.3,46.6 122.0,50.0 108.3,53.4 115.6,65.6 103.4,58.3 100.0,72.0 96.6,58.3 84.4,65.6 91.7,53.4 78.0,50.0 91.7,46.6 84.4,34.4 96.6,41.7Z' stroke='%23a9cabf'/%3E%3Cpath d='M50.0,78.0 53.4,91.7 65.6,84.4 58.3,96.6 72.0,100.0 58.3,103.4 65.6,115.6 53.4,108.3 50.0,122.0 46.6,108.3 34.4,115.6 41.7,103.4 28.0,100.0 41.7,96.6 34.4,84.4 46.6,91.7Z' stroke='%23a9cabf'/%3E%3Cpath d='M81.4,63.0 63.0,81.4 37.0,81.4 18.6,63.0 18.6,37.0 37.0,18.6 63.0,18.6 81.4,37.0Z' stroke='%23c47f56' stroke-opacity='0.75'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 340px 340px;
+  -webkit-mask-image: radial-gradient(ellipse 95% 100% at 50% 30%, rgba(0,0,0,.3) 0%, #000 85%);
+  mask-image: radial-gradient(ellipse 95% 100% at 50% 30%, rgba(0,0,0,.3) 0%, #000 85%);
 }
 
 .reader__bar {
@@ -329,19 +328,27 @@ a { color: inherit; text-decoration: none; }
   -webkit-tap-highlight-color: transparent;
 }
 .navbtn:hover, .navbtn:focus-visible { border-color: var(--gold); color: var(--gold); }
-/* keeps the title centered now that the right-side link is gone */
-.reader__bar-spacer { flex: 0 0 auto; width: 7.5rem; }
-.reader__bar .brand {
-  flex: 1; text-align: center;
-  font-family: var(--verse); font-style: italic; font-size: 1rem;
-  color: var(--ink-soft);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+/* Breadcrumb — the way back. Each level is tappable; the chapter is the tail. */
+.crumbs {
+  flex: 1; min-width: 0;
+  display: flex; align-items: baseline; gap: .5rem;
+  font-family: var(--body); font-size: .95rem;
+  overflow: hidden;
 }
-@media (max-width: 560px) {
+.crumbs__link { color: var(--ink-soft); transition: color .2s var(--ease); flex: 0 0 auto; }
+.crumbs__link:hover { color: var(--gold); }
+.crumbs__sep { color: var(--parchment-2); flex: 0 0 auto; }
+.crumbs__here {
+  color: var(--ink); font-style: italic; font-family: var(--verse);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+}
+@media (max-width: 640px) {
   .navbtn span { display: none; }               /* icon-only on phones */
   .navbtn { padding: .5rem; }
-  .reader__bar-spacer { width: 2.5rem; }
-  .reader__bar .brand { font-size: .9rem; }
+  /* on phones, collapse the crumb to just the current chapter */
+  .crumbs__link, .crumbs__sep { display: none; }
+  .crumbs__link:first-child { display: inline; }  /* keep 'The Masnavī' as home */
+  .crumbs__sep:first-of-type { display: inline; }
 }
 
 /* progress rail across the very top */
