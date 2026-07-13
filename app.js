@@ -20,6 +20,11 @@
     drawerSearch: document.getElementById("drawerSearch"),
     openDrawer: document.getElementById("openDrawer"),
     closeDrawer: document.getElementById("closeDrawer"),
+    // Rumi modal
+    rumiBtn: document.getElementById("rumiBtn"),
+    rumiModal: document.getElementById("rumiModal"),
+    rumiScrim: document.getElementById("rumiScrim"),
+    rumiClose: document.getElementById("rumiClose"),
   };
 
   let BOOK = null;
@@ -164,6 +169,20 @@
     document.body.style.overflow = "";
   }
 
+  // -- Rumi modal ----------------------------------------------------------
+  function openRumi() {
+    el.rumiModal.classList.add("is-open");
+    el.rumiModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => el.rumiClose.focus(), 60);
+  }
+  function closeRumi() {
+    el.rumiModal.classList.remove("is-open");
+    el.rumiModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (el.rumiBtn) el.rumiBtn.focus();
+  }
+
   // -- Reader --------------------------------------------------------------
   function openChapter(id) {
     const ch = BOOK.chapters.find((c) => c.id === id);
@@ -229,6 +248,9 @@
 
   // -- Keyboard: ← / → chapters, Esc closes drawer -------------------------
   function onKey(e) {
+    if (e.key === "Escape" && el.rumiModal.classList.contains("is-open")) {
+      closeRumi(); return;
+    }
     if (e.key === "Escape" && el.drawer.classList.contains("is-open")) {
       closeDrawer(); return;
     }
@@ -438,4 +460,7 @@
   el.openDrawer.addEventListener("click", openDrawer);
   el.closeDrawer.addEventListener("click", closeDrawer);
   el.drawerScrim.addEventListener("click", closeDrawer);
+  el.rumiBtn.addEventListener("click", openRumi);
+  el.rumiClose.addEventListener("click", closeRumi);
+  el.rumiScrim.addEventListener("click", closeRumi);
 })();

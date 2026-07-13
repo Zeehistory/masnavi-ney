@@ -27,7 +27,10 @@
     </svg>
     <p class="bismillah" lang="ar" dir="rtl" title="In the name of God, the Most Gracious, the Most Merciful">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
     <h1 class="home__title">The Masnav<span class="glyph-i">ī</span></h1>
-    <p class="home__by">Jalāl al-Dīn Rūmī</p>
+    <button class="home__by" id="rumiBtn" aria-haspopup="dialog">
+      Maulana Jalāl al-Dīn Rūmī
+      <span class="home__by-hint" aria-hidden="true">His life &amp; the poet</span>
+    </button>
 
     <div class="credit">
       <span class="credit__label">Translated with commentary by</span>
@@ -70,6 +73,66 @@
   </div>
   <div class="reader__body" id="readerBody"></div>
 </article>
+
+<!-- RUMI MODAL — portrait + short life -->
+<div class="modal" id="rumiModal" aria-hidden="true">
+  <div class="modal__scrim" id="rumiScrim"></div>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="rumiTitle">
+    <button class="modal__close" id="rumiClose" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <figure class="portrait" aria-label="A whirling dervish — the sema of the Mevlevi order Rūmī inspired">
+      <svg viewBox="0 0 200 240" class="portrait__svg" role="img" aria-hidden="true">
+        <defs>
+          <radialGradient id="halo" cx="50%" cy="38%" r="55%">
+            <stop offset="0%" stop-color="#1c7a6d"/>
+            <stop offset="100%" stop-color="#0a2f2a"/>
+          </radialGradient>
+        </defs>
+        <rect width="200" height="240" fill="url(#halo)"/>
+        <!-- concentric sema rings -->
+        <g fill="none" stroke="#b6b0e6" stroke-opacity="0.35">
+          <ellipse cx="100" cy="150" rx="92" ry="34"/>
+          <ellipse cx="100" cy="150" rx="66" ry="24"/>
+          <ellipse cx="100" cy="150" rx="40" ry="15"/>
+        </g>
+        <!-- the whirling dervish: tall honey-comb hat (sikke), robe flaring in the turn -->
+        <g class="portrait__figure">
+          <!-- flaring skirt -->
+          <path d="M100 120 C58 150 44 196 40 214 C70 224 130 224 160 214 C156 196 142 150 100 120 Z"
+                fill="#eef0ea" stroke="#c9cabf" stroke-width="1"/>
+          <!-- inner shadow of the turn -->
+          <path d="M100 120 C84 156 82 190 88 214 L112 214 C118 190 116 156 100 120 Z"
+                fill="#d7d9cf" opacity="0.7"/>
+          <!-- body / arms (one up, one down — the sema posture) -->
+          <path d="M100 78 L100 128 M100 92 L142 74 M100 96 L70 132" stroke="#3a4a52" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <!-- head -->
+          <circle cx="100" cy="66" r="13" fill="#caa98a"/>
+          <!-- the sikke (tall camel-hair hat) -->
+          <path d="M89 54 C90 30 92 16 100 8 C108 16 110 30 111 54 Z" fill="#8a6f52"/>
+          <path d="M87 54 L113 54 L112 60 L88 60 Z" fill="#6f5940"/>
+        </g>
+        <!-- a scatter of light, like breath around the turn -->
+        <g fill="#f2cf6b" opacity="0.5">
+          <circle cx="40" cy="70" r="1.5"/><circle cx="165" cy="60" r="1.5"/>
+          <circle cx="150" cy="110" r="1"/><circle cx="52" cy="120" r="1"/>
+          <circle cx="30" cy="150" r="1.2"/><circle cx="175" cy="150" r="1.2"/>
+        </g>
+      </svg>
+    </figure>
+
+    <div class="modal__body">
+      <p class="modal__eyebrow">1207 – 1273 · Balkh to Konya</p>
+      <h2 class="modal__title" id="rumiTitle">Maulana Jalāl al-Dīn Rūmī</h2>
+      <div class="modal__prose">
+        <p>Born in Balkh, in the lands of old Khorasan, and carried westward by the coming of the Mongols, Rūmī settled at last in Konya, in the heart of Anatolia. There he grew into a jurist and teacher of standing — until, in his late years, he met the wandering dervish Shams of Tabriz, and everything turned. Their companionship, and its loss, opened in him a fountain of poetry.</p>
+        <p>From that fire came the <i>Masnavī-yi Ma‘navī</i> — six books of rhyming couplets, dictated over the last years of his life, that his followers came to call “the Qur’ān in the Persian tongue.” It begins with the lament of the reed cut from its bed, longing to return — an image of the soul parted from its Origin, which is the burden of the whole work.</p>
+        <p>After his death, his followers gathered as the Mevlevî order, and remembered him in the turning dance of the <i>samā‘</i> — one hand raised to receive, one lowered to give, the whole body a reed through which the breath of God might pass.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- CHAPTER DRAWER — persistent navigator, reachable from the reader -->
 <div class="drawer" id="drawer" aria-hidden="true">

@@ -130,7 +130,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0 0 2rem; text-align: center;
   font-family: "Aref Ruqaa", var(--verse), serif;
   font-weight: 400;
-  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
   line-height: 1.6;
   color: var(--warm);
 }
@@ -141,11 +141,29 @@ a { color: inherit; text-decoration: none; }
 }
 /* Render the long-i in a face that sets its macron cleanly (Fraunces floats it) */
 .glyph-i { font-family: var(--body); font-style: normal; }
+/* The poet's name — pronounced, and a doorway into his life */
 .home__by {
+  display: inline-flex; flex-direction: column; align-items: center; gap: .35rem;
+  margin: 0 auto 1.75rem;
   font-family: var(--verse); font-style: italic;
-  font-size: clamp(1rem, 2.4vw, 1.25rem);
-  color: var(--warm); margin: 0 0 1.75rem;
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  color: var(--warm);
+  background: none; border: none; cursor: pointer;
+  padding: .4rem 1rem; border-radius: 12px;
+  transition: color .25s var(--ease), background .25s var(--ease);
+  -webkit-tap-highlight-color: transparent;
 }
+.home__by:hover, .home__by:focus-visible {
+  color: var(--warm-soft);
+  background: color-mix(in srgb, var(--warm) 10%, transparent);
+}
+.home__by-hint {
+  font-family: var(--body); font-style: normal;
+  font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--slate); opacity: .8;
+  display: inline-flex; align-items: center; gap: .4rem;
+}
+.home__by-hint::before, .home__by-hint::after { content: "✦"; font-size: .6em; color: var(--warm); }
 
 /* Translator credit — prominent, a proper part of the masthead */
 .credit {
@@ -598,6 +616,69 @@ a { color: inherit; text-decoration: none; }
 }
 /* Never let anything force a horizontal scroll on small screens */
 .home, .contents, .reader { max-width: 100%; }
+
+/* ==========================================================================
+   RUMI MODAL — an artistic portrait and a short life
+   ========================================================================== */
+.modal { position: fixed; inset: 0; z-index: 200; visibility: hidden; }
+.modal.is-open { visibility: visible; }
+.modal__scrim {
+  position: absolute; inset: 0;
+  background: rgba(6,26,23,.62); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity .3s var(--ease);
+}
+.modal.is-open .modal__scrim { opacity: 1; }
+.modal__card {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -48%) scale(.98);
+  width: min(92vw, 40rem); max-height: 88vh; overflow-y: auto;
+  display: grid; grid-template-columns: 40% 1fr;
+  background: var(--night); color: var(--cream-dim);
+  border: 1px solid var(--night-3); border-radius: 18px;
+  box-shadow: 0 40px 90px rgba(0,0,0,.5);
+  opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease);
+}
+.modal.is-open .modal__card { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .modal__scrim, .modal__card { transition: none; }
+}
+.modal__close {
+  position: absolute; top: .75rem; right: .75rem; z-index: 2;
+  display: inline-flex; padding: .4rem; border-radius: 999px;
+  background: rgba(0,0,0,.25); border: none; color: var(--cream-dim); cursor: pointer;
+  transition: color .2s var(--ease), background .2s var(--ease);
+}
+.modal__close:hover, .modal__close:focus-visible { color: var(--warm); background: rgba(0,0,0,.4); }
+
+/* The artistic portrait — a whirling dervish, filling the left panel */
+.portrait { margin: 0; }
+.portrait__svg {
+  display: block; width: 100%; height: 100%;
+  border-radius: 18px 0 0 18px;
+  object-fit: cover;
+}
+
+.modal__body { padding: clamp(1.5rem, 4vw, 2.5rem); }
+.modal__eyebrow {
+  font-family: var(--verse); font-style: italic; font-size: .95rem;
+  color: var(--warm); margin: 0 0 .3rem;
+}
+.modal__title {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.1;
+  color: var(--parchment); margin: 0 0 1.25rem;
+}
+.modal__prose p {
+  font-family: var(--body); font-size: 1rem; line-height: 1.7;
+  color: var(--cream-dim); margin: 0 0 1rem; opacity: .92;
+}
+.modal__prose p:last-child { margin-bottom: 0; }
+.modal__prose i { color: var(--warm); }
+
+@media (max-width: 620px) {
+  .modal__card { grid-template-columns: 1fr; }
+  .portrait__svg { height: 180px; border-radius: 18px 18px 0 0; }
+}
 
 /* focus baseline */
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
