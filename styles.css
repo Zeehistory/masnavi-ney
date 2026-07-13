@@ -442,9 +442,13 @@ a { color: inherit; text-decoration: none; }
 .ref__loc { color: var(--ink-soft); }
 
 /* Transliteration — set apart and italic */
+/* Arabic transliteration — the verse being pronounced. Italic, in the naskh
+   face, tinted so it's clearly distinct from the English around it. */
 .translit {
   font-family: var(--verse); font-style: italic;
+  font-size: 1.05em;
   color: var(--gold);
+  letter-spacing: .01em;
 }
 
 /* A longer Qur'anic quotation, set as a blockquote */

@@ -250,9 +250,30 @@
   // A bracketed translator's note (long enough to be a real note, not an aside).
   const FOOTNOTE = /\[([^\]]{16,})\]/g;
 
-  // An Arabic transliteration phrase sitting between a closing quote and its
-  // citation — a run of lowercase words with the tell-tale ‘ ’ hamza marks.
-  const TRANSLIT = /(&#8221;|”|")(\s+)([a-z][a-zā-ū‘’' -]*['‘’][a-zā-ū‘’' -]*?)(\s*)(?=\()/g;
+  // A candidate transliteration phrase: a lowercase run ending just before a
+  // ":" gloss or a "(" citation, often after a comma or "said".
+  const TRANSLIT_CAND = /(^|[,;:]\s|said[,:]?\s|:\s)([a-z][a-zā-ū’‘'\- ]{5,}?)\s*(?=[:(])/g;
+  const AR_PARTICLES = new Set(("wa al bil min an fa il ith inna inn maa mai un ala alaa " +
+    "lil lit li zaati huwa hum ilaihi bisultaan").split(" "));
+
+  // Score how "Arabic" a single word looks.
+  function arScore(w) {
+    const wl = w.toLowerCase().replace(/[’‘']/g, "");
+    let s = 0;
+    if (AR_PARTICLES.has(wl)) s += 2;
+    if (/[’‘']/.test(w)) s += 2;              // interior hamza
+    if (/(aa|ii|uu)/.test(wl)) s += 1;         // doubled vowels
+    if (/(dh|kh|gh|zh|th)/.test(wl)) s += 1;   // digraphs
+    return s;
+  }
+  // Is this whole phrase a transliteration (not ordinary English)?
+  function isTranslit(phrase) {
+    const words = phrase.split(/[ \-]+/).filter(Boolean);
+    if (words.length < 2) return false;
+    let total = 0, strong = 0;
+    for (const w of words) { const sc = arScore(w); total += sc; if (sc >= 2) strong++; }
+    return strong >= 1 && total >= Math.max(3, words.length);
+  }
 
   // Format inline: footnotes, transliterations, then citations.
   function formatInline(text, notes) {
@@ -266,13 +287,11 @@
              '<a href="#fn-' + n + '">' + n + "</a></sup>";
     });
 
-    // 2) Transliteration between a closing quote and its citation → italic,
-    //    set apart on its own with a subtle label.
-    s = s.replace(TRANSLIT, (m, q, sp, phrase) => {
+    // 2) Arabic transliterations → italic, clearly set apart
+    s = s.replace(TRANSLIT_CAND, (m, lead, phrase) => {
       const clean = phrase.trim();
-      // guard: real transliteration has a hamza and isn't ordinary English
-      if (clean.length < 6 || !/['‘’]/.test(clean)) return m;
-      return q + ' <span class="translit">' + clean + "</span> ";
+      if (!isTranslit(clean)) return m;
+      return lead + '<i class="translit">' + clean + "</i>";
     });
 
     // 3) Qur'anic references → one harmonized, clearly separated citation
