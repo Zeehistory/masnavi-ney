@@ -1,36 +1,43 @@
 /* ==========================================================================
    The Masnavī of Jalāl al-Dīn Rūmī, Book One — a reading experience
-   Palette: İznik — Ottoman ceramic cobalt, turquoise, coral, and saffron.
+   Palette: the Green Dome of Konya — dome-green ground, cobalt & gold accents.
    ========================================================================== */
 
 :root {
-  /* Ground & surfaces — the deep blue of a Konya night, ground for the
-     Green Dome (Kubbe-i Hadra) of Rūmī's mausoleum. */
-  --night:      #0a2740;   /* deep midnight-teal ground */
-  --night-2:    #0f3350;   /* raised panels */
-  --night-3:    #1c4a63;   /* hover / borders */
+  /* Ground & surfaces — the glazed turquoise-green of the Green Dome
+     (Kubbe-i Hadra) that crowns Rūmī's mausoleum in Konya. The whole site
+     lives inside that dome. */
+  --night:      #0d5c52;   /* deep dome-green ground */
+  --night-2:    #0f6b5f;   /* raised panels (tile) */
+  --night-3:    #1f8578;   /* hover / borders */
   --parchment:  #f7f3e8;   /* tile-white slip — the reading surface */
   --parchment-2:#e8e0cd;
 
   /* Ink & voices */
-  --ink:        #10293c;   /* deep teal-ink body text */
-  --ink-soft:   #3f5f70;   /* secondary on tile-white */
+  --ink:        #123b36;   /* deep green-ink body text */
+  --ink-soft:   #3d6a63;   /* secondary on tile-white */
 
-  /* THE SIGNATURE — Konya green, the glazed turquoise-green of the dome.
-     (Kept under the --gold names so every accent flips to green at once.) */
-  --gold:       #14a08a;   /* dome green — the accent */
-  --gold-soft:  #35c3ab;   /* brighter green for hover/highlights */
-  --accent:     #14a08a;
-  --accent-soft:#35c3ab;
-  --accent-deep:#0c6f60;   /* deep jade for medallions */
+  /* THE ACCENT — the cobalt inscription band + white calligraphy of the dome.
+     (Kept under the --gold names so every accent flips at once.) */
+  --gold:       #223f7a;   /* inscription cobalt — the accent */
+  --gold-soft:  #3a5ba6;   /* brighter cobalt for hover/highlights */
+  --accent:     #f4efe0;   /* white calligraphy — the bright detail */
+  --accent-soft:#ffffff;
+  --accent-deep:#16305e;   /* deep cobalt for medallions */
 
-  --slate:      #7fa9b0;   /* soft grey-teal — muted text on the ground */
-  --slate-dim:  #4d7f86;
-  --madder:     #c1272d;   /* rare warm emphasis */
-  --cream-dim:  #dfe9e7;   /* pale text on the ground */
+  --slate:      #9ecfc7;   /* pale grey-green — muted text on the dome */
+  --slate-dim:  #6ba69c;
+  --madder:     #c8763a;   /* rare warm terracotta emphasis */
+  --cream-dim:  #eaf5f1;   /* near-white text on the dome */
 
-  /* Type — a literary old-style display, a warm reading serif, a naskh face */
-  --display: "Fraunces", Georgia, serif;
+  /* Warm bright accent for TEXT sitting on the green ground — a soft antique
+     gold, the color of the calligraphy's ground. High contrast, legible. */
+  --warm:       #ecc98a;
+  --warm-soft:  #f5ddaf;
+
+  /* Type — a naskh-flavored Latin display (Gulzar) that carries manuscript
+     DNA, a warm reading serif, and Arabic naskh for verse/calligraphy. */
+  --display: "Gulzar", "Amiri", Georgia, serif;
   --verse:   "Amiri", serif;
   --body:    "Spectral", Georgia, serif;
   --label:   "Spectral", Georgia, serif;   /* labels are just quiet body type */
@@ -69,7 +76,7 @@ a { color: inherit; text-decoration: none; }
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   opacity: .12;                /* a whisper — never competes with text */
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2335c3ab' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%2314a08a' stroke-opacity='0.7'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%2314a08a'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23f4efe0' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%236ba69c' stroke-opacity='0.7'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%236ba69c'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px 200px;
   /* fade the pattern toward the center so reading columns stay clean */
@@ -92,13 +99,13 @@ a { color: inherit; text-decoration: none; }
   display: block; margin: 0 auto 1.5rem;
   width: clamp(56px, 12vw, 76px); height: auto;
   fill: none;
-  stroke: var(--accent); stroke-width: 2.4;
+  stroke: var(--warm); stroke-width: 2.4;
   stroke-linecap: round; stroke-linejoin: round;
 }
 .dome__cone { stroke-width: 2.8; }
-.dome__flute { stroke: var(--accent); stroke-width: 1.4; opacity: .55; }
+.dome__flute { stroke: var(--warm); stroke-width: 1.4; opacity: .5; }
 .dome__finial { stroke: var(--accent-soft); stroke-width: 2.2; }
-.dome__base { stroke: var(--accent); stroke-width: 2.8; }
+.dome__base { stroke: var(--warm); stroke-width: 2.8; }
 
 /* Bismillah — real Arabic calligraphy (Aref Ruqaa), gold, centered */
 .bismillah {
@@ -107,7 +114,7 @@ a { color: inherit; text-decoration: none; }
   font-weight: 400;
   font-size: clamp(2rem, 6vw, 3.25rem);
   line-height: 1.6;
-  color: var(--gold);
+  color: var(--warm);
 }
 .home__title {
   font-family: var(--display); font-weight: 400;
@@ -119,7 +126,7 @@ a { color: inherit; text-decoration: none; }
 .home__by {
   font-family: var(--verse); font-style: italic;
   font-size: clamp(1rem, 2.4vw, 1.25rem);
-  color: var(--accent); margin: 0 0 1.75rem;
+  color: var(--warm); margin: 0 0 1.75rem;
 }
 
 /* Translator credit — prominent, a proper part of the masthead */
@@ -141,7 +148,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--parchment);
 }
 .credit__org {
-  font-family: var(--body); font-size: 1rem; color: var(--accent);
+  font-family: var(--body); font-size: 1rem; color: var(--warm);
   margin-top: .15rem;
 }
 .home__lede {
@@ -164,7 +171,7 @@ a { color: inherit; text-decoration: none; }
   transition: border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease);
 }
 .book--live { cursor: pointer; }
-.book--live:hover { border-color: var(--gold); transform: translateY(-2px); }
+.book--live:hover { border-color: var(--warm); transform: translateY(-2px); }
 .book--live:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .book--soon { opacity: .5; }
 
@@ -173,7 +180,7 @@ a { color: inherit; text-decoration: none; }
   width: 3.25rem; height: 3.25rem; border-radius: 50%;
   display: grid; place-items: center;
   border: 1px solid var(--night-3);
-  font-family: var(--display); font-size: 1.15rem; color: var(--gold);
+  font-family: var(--display); font-size: 1.15rem; color: var(--warm);
   position: relative;
 }
 .book--live .book__num { border-color: var(--slate-dim); }
@@ -186,7 +193,7 @@ a { color: inherit; text-decoration: none; }
 }
 .book__ar {
   font-family: "Aref Ruqaa", var(--verse), serif;
-  font-size: 1.25rem; color: var(--accent);
+  font-size: 1.25rem; color: var(--warm);
   flex: 0 0 auto;
 }
 .book__desc {
@@ -197,7 +204,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--verse); font-style: italic; font-size: .95rem;
   color: var(--slate); white-space: nowrap;
 }
-.book--live .book__status { color: var(--gold); }
+.book--live .book__status { color: var(--warm); }
 
 @media (max-width: 560px) {
   .book { grid-template-columns: 2.75rem 1fr; gap: 1rem; padding: 1.15rem; }
@@ -221,7 +228,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--verse); font-style: italic; font-size: 1rem;
   color: var(--slate); transition: color .25s var(--ease);
 }
-.contents__back:hover { color: var(--gold); }
+.contents__back:hover { color: var(--warm); }
 .contents__head h2 {
   font-family: var(--display); font-weight: 400;
   font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1;
@@ -258,10 +265,10 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
 }
 .toc__item:hover { padding-left: 1rem; }
-.toc__item:hover .toc__title { color: var(--gold-soft); }
+.toc__item:hover .toc__title { color: var(--warm-soft); }
 .toc__num {
   font-family: var(--display); font-size: 1.1rem; font-style: italic;
-  color: var(--gold); padding-top: .4rem;
+  color: var(--warm); padding-top: .4rem;
 }
 .toc__title {
   font-family: var(--display); font-weight: 400;
@@ -319,7 +326,7 @@ a { color: inherit; text-decoration: none; }
   transition: border-color .25s var(--ease), color .25s var(--ease);
   -webkit-tap-highlight-color: transparent;
 }
-.navbtn:hover, .navbtn:focus-visible { border-color: var(--gold); color: var(--gold-soft); }
+.navbtn:hover, .navbtn:focus-visible { border-color: var(--warm); color: var(--warm); }
 .reader__bar .brand {
   flex: 1; text-align: center;
   font-family: var(--verse); font-style: italic; font-size: 1rem;
@@ -332,7 +339,7 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex; align-items: center; gap: .4rem;
   transition: color .25s var(--ease);
 }
-.backlink:hover { color: var(--gold-soft); }
+.backlink:hover { color: var(--warm); }
 .backlink:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 @media (max-width: 560px) {
   .navbtn span { display: none; }               /* icon-only on phones */
@@ -454,7 +461,7 @@ a { color: inherit; text-decoration: none; }
   padding: .35rem; display: inline-flex; border-radius: 8px;
   transition: color .2s var(--ease), background .2s var(--ease);
 }
-.drawer__close:hover, .drawer__close:focus-visible { color: var(--gold); background: var(--night-2); }
+.drawer__close:hover, .drawer__close:focus-visible { color: var(--warm); background: var(--night-2); }
 .drawer__search {
   display: flex; align-items: center; gap: .6rem; flex: 0 0 auto;
   margin: 1rem 1.25rem; padding: .65rem 1rem;
@@ -475,8 +482,8 @@ a { color: inherit; text-decoration: none; }
 }
 .drawer__row:hover { background: var(--night-2); }
 .drawer__row.is-current { background: var(--night-2); }
-.drawer__row.is-current .drawer__rtitle { color: var(--gold-soft); }
-.drawer__rnum { font-family: var(--display); font-style: italic; font-size: .95rem; color: var(--gold); padding-top: .2rem; }
+.drawer__row.is-current .drawer__rtitle { color: var(--warm-soft); }
+.drawer__rnum { font-family: var(--display); font-style: italic; font-size: .95rem; color: var(--warm); padding-top: .2rem; }
 .drawer__rtitle { font-family: var(--display); font-size: 1.05rem; line-height: 1.25; color: var(--cream-dim); }
 .drawer__row.is-hidden { display: none; }
 
