@@ -309,8 +309,8 @@ a { color: inherit; text-decoration: none; }
   --parchment-2: #1a6b5f;   /* hairline borders / rules */
   --ink:         #eef5f1;   /* near-white body text */
   --ink-soft:    #9ccabf;   /* muted green-white secondary */
-  --gold:        #ecc98a;   /* warm gold accent on the dark-green surface */
-  --gold-soft:   #f5ddaf;
+  --gold:        #b6b0e6;   /* lavender (inscription-indigo) accent on the dark-green surface */
+  --gold-soft:   #d5d1f2;
 
   position: relative; z-index: 1;
   min-height: 100svh;
