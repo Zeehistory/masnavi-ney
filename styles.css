@@ -3,6 +3,15 @@
    Palette: the Green Dome of Konya — dome-green ground, cobalt & gold accents.
    ========================================================================== */
 
+/* Mirza sets the macron vowels (ā ī ū) poorly — the macron detaches. Borrow
+   Spectral's glyphs for just those code points so accented names render clean
+   everywhere the display face is used. "DisplayFix" = Spectral-for-macrons. */
+@font-face {
+  font-family: "DisplayFix";
+  src: local("Spectral"), local("Spectral-Regular");
+  unicode-range: U+0100-017F, U+1E00-1EFF;   /* Latin Extended-A/Additional (ā ī ū ō ē …) */
+}
+
 :root {
   /* Ground & surfaces — the glazed turquoise-green of the Green Dome
      (Kubbe-i Hadra) that crowns Rūmī's mausoleum in Konya. The whole site
@@ -42,7 +51,7 @@
   /* Type — Mirza, a nastaʿlīq-inspired Latin display with genuine Persianate
      calligraphic DNA (rarely seen on the web); a warm reading serif; and
      Arabic naskh for verse & calligraphy. */
-  --display: "Mirza", "Amiri", Georgia, serif;
+  --display: "DisplayFix", "Mirza", "Amiri", Georgia, serif;
   --verse:   "Amiri", serif;
   --body:    "Spectral", Georgia, serif;
   --label:   "Spectral", Georgia, serif;   /* labels are just quiet body type */
@@ -141,29 +150,22 @@ a { color: inherit; text-decoration: none; }
 }
 /* Render the long-i in a face that sets its macron cleanly (Fraunces floats it) */
 .glyph-i { font-family: var(--body); font-style: normal; }
-/* The poet's name — pronounced, and a doorway into his life */
+/* The poet's name — pronounced, and a doorway into his life. A subtle
+   underline hints it's clickable without adding clutter. */
 .home__by {
-  display: inline-flex; flex-direction: column; align-items: center; gap: .35rem;
-  margin: 0 auto 1.75rem;
+  display: inline-block; margin: 0 auto 1.75rem;
   font-family: var(--verse); font-style: italic;
   font-size: clamp(1.4rem, 3.4vw, 2rem);
   color: var(--warm);
   background: none; border: none; cursor: pointer;
-  padding: .4rem 1rem; border-radius: 12px;
-  transition: color .25s var(--ease), background .25s var(--ease);
+  padding: .3rem .6rem; border-radius: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--warm) 40%, transparent);
+  transition: color .25s var(--ease), border-color .25s var(--ease);
   -webkit-tap-highlight-color: transparent;
 }
 .home__by:hover, .home__by:focus-visible {
-  color: var(--warm-soft);
-  background: color-mix(in srgb, var(--warm) 10%, transparent);
+  color: var(--warm-soft); border-bottom-color: var(--warm-soft);
 }
-.home__by-hint {
-  font-family: var(--body); font-style: normal;
-  font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--slate); opacity: .8;
-  display: inline-flex; align-items: center; gap: .4rem;
-}
-.home__by-hint::before, .home__by-hint::after { content: "✦"; font-size: .6em; color: var(--warm); }
 
 /* Translator credit — prominent, a proper part of the masthead */
 .credit {
@@ -631,11 +633,12 @@ a { color: inherit; text-decoration: none; }
 .modal__card {
   position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -48%) scale(.98);
-  width: min(92vw, 40rem); max-height: 88vh; overflow-y: auto;
-  display: grid; grid-template-columns: 40% 1fr;
+  width: min(94vw, 46rem); max-height: 90vh;
+  display: grid; grid-template-columns: 15rem 1fr;
   background: var(--night); color: var(--cream-dim);
-  border: 1px solid var(--night-3); border-radius: 18px;
-  box-shadow: 0 40px 90px rgba(0,0,0,.5);
+  border: 1px solid var(--night-3); border-radius: 16px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.55);
+  overflow: hidden;
   opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease);
 }
 .modal.is-open .modal__card { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -643,41 +646,51 @@ a { color: inherit; text-decoration: none; }
   .modal__scrim, .modal__card { transition: none; }
 }
 .modal__close {
-  position: absolute; top: .75rem; right: .75rem; z-index: 2;
-  display: inline-flex; padding: .4rem; border-radius: 999px;
-  background: rgba(0,0,0,.25); border: none; color: var(--cream-dim); cursor: pointer;
-  transition: color .2s var(--ease), background .2s var(--ease);
+  position: absolute; top: .8rem; right: .8rem; z-index: 2;
+  display: inline-flex; padding: .45rem; border-radius: 999px;
+  background: rgba(10,32,28,.45); border: none; color: #fff; cursor: pointer;
+  transition: background .2s var(--ease);
 }
-.modal__close:hover, .modal__close:focus-visible { color: var(--warm); background: rgba(0,0,0,.4); }
+.modal__close:hover, .modal__close:focus-visible { background: rgba(10,32,28,.75); }
 
-/* The artistic portrait — a whirling dervish, filling the left panel */
-.portrait { margin: 0; }
-.portrait__svg {
+/* The portrait — a classical miniature, filling the left column.
+   A calm gradient sits behind it as a fallback until the image loads. */
+.portrait {
+  margin: 0; height: 100%;
+  background: radial-gradient(ellipse at 50% 35%, var(--night-2), #0a2f2a);
+}
+.portrait__img {
   display: block; width: 100%; height: 100%;
-  border-radius: 18px 0 0 18px;
-  object-fit: cover;
+  min-height: 22rem;
+  object-fit: cover; object-position: center top;
 }
 
-.modal__body { padding: clamp(1.5rem, 4vw, 2.5rem); }
+.modal__body {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  overflow-y: auto; max-height: 90vh;
+}
 .modal__eyebrow {
-  font-family: var(--verse); font-style: italic; font-size: .95rem;
-  color: var(--warm); margin: 0 0 .3rem;
+  font-family: var(--body); font-size: .8rem; letter-spacing: .04em;
+  color: var(--warm); margin: 0 0 .5rem;
 }
 .modal__title {
   font-family: var(--display); font-weight: 400;
-  font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.1;
-  color: var(--parchment); margin: 0 0 1.25rem;
+  font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.15;
+  color: var(--parchment); margin: 0 0 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--night-3);
 }
 .modal__prose p {
-  font-family: var(--body); font-size: 1rem; line-height: 1.7;
-  color: var(--cream-dim); margin: 0 0 1rem; opacity: .92;
+  font-family: var(--body); font-size: 1.02rem; line-height: 1.75;
+  color: var(--cream-dim); margin: 0 0 1.1rem;
 }
 .modal__prose p:last-child { margin-bottom: 0; }
-.modal__prose i { color: var(--warm); }
+.modal__prose i { color: var(--warm); font-style: italic; }
 
 @media (max-width: 620px) {
-  .modal__card { grid-template-columns: 1fr; }
-  .portrait__svg { height: 180px; border-radius: 18px 18px 0 0; }
+  .modal__card { grid-template-columns: 1fr; max-height: 92vh; overflow-y: auto; }
+  .portrait__img { min-height: 0; height: 15rem; }
+  .modal__body { max-height: none; }
 }
 
 /* focus baseline */
