@@ -12,7 +12,9 @@
     search: document.getElementById("tocSearch"),
     progress: document.getElementById("progress"),
     statChapters: document.getElementById("stat-chapters"),
+    contentsTitle: document.getElementById("contentsTitle"),
     crumb: document.getElementById("readerCrumb"),
+    crumbBook: document.getElementById("crumbBook"),
     // drawer
     drawer: document.getElementById("drawer"),
     drawerScrim: document.getElementById("drawerScrim"),
@@ -28,50 +30,70 @@
     rumiClose: document.getElementById("rumiClose"),
   };
 
-  let BOOK = null;
-  let currentIdx = -1;   // index of chapter currently open in the reader
+  let BOOK = null;         // the currently-loaded book's data
+  let bookNum = 0;         // which book is loaded (1-6)
+  let currentIdx = -1;     // index of chapter currently open in the reader
+  const bookCache = {};    // loaded book data by number
 
   const fmt = (n) => n.toLocaleString("en-US");
   const pad2 = (n) => String(n).padStart(2, "0");
 
-  // The six Books (daftars) of the Masnavī. Only Book One has text so far.
+  // The six Books (daftars) of the Masnavī — all complete.
   const DAFTARS = [
-    { n: 1, name: "Book One",   ar: "دفتر اول",  desc: "The reed's lament, the king and the maid, and the parables of the soul's return.", live: true },
-    { n: 2, name: "Book Two",   ar: "دفتر دوم",  desc: "On companionship, sincerity, and the trials of the seeker.", live: false },
-    { n: 3, name: "Book Three", ar: "دفتر سوم",  desc: "Knowledge, striving, and the wisdom hidden in hardship.", live: false },
-    { n: 4, name: "Book Four",  ar: "دفتر چهارم", desc: "Love as the astrolabe of the mysteries of God.", live: false },
-    { n: 5, name: "Book Five",  ar: "دفتر پنجم", desc: "Discipline of the self and the stations of the heart.", live: false },
-    { n: 6, name: "Book Six",   ar: "دفتر ششم",  desc: "The final ascent — union, and the return of the reed to the reed-bed.", live: false },
+    { n: 1, name: "Book One",   ar: "دفتر اول",  chapters: 182, desc: "The reed’s lament, the king and the maid, and the parables of the soul’s return." },
+    { n: 2, name: "Book Two",   ar: "دفتر دوم",  chapters: 90,  desc: "Reason and spiritual vision; sincerity, and the trials of companionship." },
+    { n: 3, name: "Book Three", ar: "دفتر سوم",  chapters: 224, desc: "Knowledge, striving, and the wisdom hidden within hardship." },
+    { n: 4, name: "Book Four",  ar: "دفتر چهارم", chapters: 106, desc: "Love as the astrolabe of the mysteries of God." },
+    { n: 5, name: "Book Five",  ar: "دفتر پنجم", chapters: 188, desc: "Discipline of the self and the stations of the heart." },
+    { n: 6, name: "Book Six",   ar: "دفتر ششم",  chapters: 92,  desc: "The final ascent — union, and the reed’s return to the reed-bed." },
   ];
 
   function buildBooks() {
     const frag = document.createDocumentFragment();
     DAFTARS.forEach((d) => {
       const li = document.createElement("li");
-      li.className = "book " + (d.live ? "book--live" : "book--soon");
-      const status = d.live
-        ? '<span class="book__status">' + BOOK.chapters.length + " chapters →</span>"
-        : '<span class="book__status">Coming soon</span>';
+      li.className = "book book--live";
       li.innerHTML =
         '<span class="book__num">' + d.n + "</span>" +
         '<div class="book__meta">' +
           '<p class="book__name">' + d.name +
             '<span class="book__ar" lang="ar" dir="rtl">' + d.ar + "</span></p>" +
           '<p class="book__desc">' + escapeHTML(d.desc) + "</p>" +
-        "</div>" + status;
-      if (d.live) {
-        li.tabIndex = 0;
-        li.setAttribute("role", "link");
-        const go = () => { location.hash = "#contents"; };
-        li.addEventListener("click", go);
-        li.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
-        });
-      }
+        "</div>" +
+        '<span class="book__status">' + d.chapters + " chapters →</span>";
+      li.tabIndex = 0;
+      li.setAttribute("role", "link");
+      const go = () => { location.hash = "#book/" + d.n; };
+      li.addEventListener("click", go);
+      li.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      });
       frag.appendChild(li);
     });
     el.books.appendChild(frag);
   }
+
+  // Load a book's data (cached), then run `cb`.
+  function loadBook(n, cb) {
+    if (bookCache[n]) { setBook(n); cb(); return; }
+    el.toc.innerHTML = '<p class="loading">Opening Book ' + n + "…</p>";
+    fetch("data/book-" + n + ".json")
+      .then((r) => r.json())
+      .then((data) => { bookCache[n] = data; setBook(n); cb(); })
+      .catch(() => {
+        el.toc.innerHTML = '<p class="loading">Could not open Book ' + n +
+          ". Serve this folder over http, not file://.</p>";
+      });
+  }
+
+  function setBook(n) {
+    bookNum = n;
+    BOOK = bookCache[n];
+    buildTOC();
+    buildDrawer();
+  }
+
+  const daftar = (n) => DAFTARS[n - 1] || DAFTARS[0];
 
   // -- Views ---------------------------------------------------------------
   function show(view) {
@@ -91,25 +113,41 @@
       }
       return;
     }
-    if (hash === "#hero" || hash === "") {
-      show(el.hero);
-    } else if (hash === "#contents") {
-      show(el.contents);
-      window.scrollTo(0, 0);
-    } else if (hash.startsWith("#read/")) {
-      const id = parseInt(hash.slice(6), 10);
-      openChapter(id);
-    } else {
-      show(el.hero);
+    // #book/N/read/M  — a chapter in book N
+    let m = hash.match(/^#book\/(\d+)\/read\/(\d+)$/);
+    if (m) {
+      const n = +m[1], id = +m[2];
+      loadBook(n, () => openChapter(id));
+      return;
     }
+    // #book/N — contents of book N
+    m = hash.match(/^#book\/(\d+)$/);
+    if (m) {
+      const n = +m[1];
+      loadBook(n, () => {
+        updateContentsHead();
+        show(el.contents);
+        window.scrollTo(0, 0);
+      });
+      return;
+    }
+    // home
+    show(el.hero);
+  }
+
+  function updateContentsHead() {
+    const d = daftar(bookNum);
+    if (el.contentsTitle) el.contentsTitle.textContent = d.name;
+    if (el.statChapters) el.statChapters.textContent = "· " + BOOK.chapters.length + " chapters";
   }
 
   // -- Contents ------------------------------------------------------------
   function buildTOC() {
+    el.toc.innerHTML = "";
     const frag = document.createDocumentFragment();
     BOOK.chapters.forEach((ch, i) => {
       const a = document.createElement("a");
-      a.href = "#read/" + ch.id;
+      a.href = "#book/" + bookNum + "/read/" + ch.id;
       a.className = "toc__item";
       a.dataset.text = (ch.title + " " + (ch.subtitle || "")).toLowerCase();
       a.innerHTML =
@@ -121,6 +159,7 @@
       frag.appendChild(a);
     });
     el.toc.appendChild(frag);
+    if (el.search) el.search.value = "";
   }
 
   function filterList(container, sel, q) {
@@ -133,10 +172,11 @@
 
   // -- Drawer (persistent navigator) --------------------------------------
   function buildDrawer() {
+    el.drawerList.innerHTML = "";
     const frag = document.createDocumentFragment();
     BOOK.chapters.forEach((ch, i) => {
       const a = document.createElement("a");
-      a.href = "#read/" + ch.id;
+      a.href = "#book/" + bookNum + "/read/" + ch.id;
       a.className = "drawer__row";
       a.dataset.idx = i;
       a.dataset.text = (ch.title + " " + (ch.subtitle || "")).toLowerCase();
@@ -187,7 +227,7 @@
   // -- Reader --------------------------------------------------------------
   function openChapter(id) {
     const ch = BOOK.chapters.find((c) => c.id === id);
-    if (!ch) { location.hash = "#contents"; return; }
+    if (!ch) { location.hash = "#book/" + bookNum; return; }
 
     const idx = BOOK.chapters.indexOf(ch);
     currentIdx = idx;
@@ -196,9 +236,10 @@
 
     const notes = [];   // collected footnotes for this chapter
 
+    const rd = "#book/" + bookNum + "/read/";
     let html = "";
-    html += '<div class="chapter__eyebrow">Chapter ' + (idx + 1) +
-            " of " + BOOK.chapters.length + "</div>";
+    html += '<div class="chapter__eyebrow">' + daftar(bookNum).name +
+            " · Chapter " + (idx + 1) + " of " + BOOK.chapters.length + "</div>";
     html += '<h1 class="chapter__title">' + escapeHTML(ch.title) + "</h1>";
     if (ch.subtitle) html += '<p class="chapter__sub">' + escapeHTML(ch.subtitle) + "</p>";
 
@@ -222,18 +263,22 @@
     // Minimal prev / next
     html += '<nav class="chapter__nav">';
     html += prev
-      ? '<a class="prev" href="#read/' + prev.id + '"><span class="dir">← Previous</span>' +
+      ? '<a class="prev" href="' + rd + prev.id + '"><span class="dir">← Previous</span>' +
         '<span class="name">' + escapeHTML(prev.title) + "</span></a>"
       : '<span class="prev is-empty"></span>';
     html += next
-      ? '<a class="next" href="#read/' + next.id + '"><span class="dir">Next →</span>' +
+      ? '<a class="next" href="' + rd + next.id + '"><span class="dir">Next →</span>' +
         '<span class="name">' + escapeHTML(next.title) + "</span></a>"
-      : '<a class="next" href="#contents"><span class="dir">End →</span>' +
+      : '<a class="next" href="#book/' + bookNum + '"><span class="dir">End →</span>' +
         '<span class="name">Back to contents</span></a>';
     html += "</nav>";
 
     el.body.innerHTML = html;
     if (el.crumb) el.crumb.textContent = ch.title;
+    if (el.crumbBook) {
+      el.crumbBook.textContent = daftar(bookNum).name;
+      el.crumbBook.setAttribute("href", "#book/" + bookNum);
+    }
     show(el.reader);
     window.scrollTo(0, 0);
     updateProgress();
@@ -260,9 +305,9 @@
     if (tag === "input" || tag === "textarea") return;
     if (el.reader.classList.contains("is-hidden")) return;
     if (e.key === "ArrowRight" && currentIdx < BOOK.chapters.length - 1) {
-      location.hash = "#read/" + BOOK.chapters[currentIdx + 1].id;
+      location.hash = "#book/" + bookNum + "/read/" + BOOK.chapters[currentIdx + 1].id;
     } else if (e.key === "ArrowLeft" && currentIdx > 0) {
-      location.hash = "#read/" + BOOK.chapters[currentIdx - 1].id;
+      location.hash = "#book/" + bookNum + "/read/" + BOOK.chapters[currentIdx - 1].id;
     }
   }
 
@@ -437,21 +482,8 @@
   }
 
   // -- init ----------------------------------------------------------------
-  fetch("data/book.json")
-    .then((r) => r.json())
-    .then((data) => {
-      BOOK = data;
-      if (el.statChapters) el.statChapters.textContent = "· " + BOOK.chapters.length + " chapters";
-      buildBooks();
-      buildTOC();
-      buildDrawer();
-      route();
-    })
-    .catch((err) => {
-      el.hero.insertAdjacentHTML("beforeend",
-        '<p style="color:#f2cf6b;font-family:monospace">Could not load the book (' +
-        escapeHTML(err.message) + "). Serve this folder over http, not file://.</p>");
-    });
+  buildBooks();
+  route();
 
   window.addEventListener("hashchange", route);
   window.addEventListener("scroll", updateProgress, { passive: true });

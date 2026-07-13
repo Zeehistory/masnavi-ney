@@ -57,11 +57,11 @@
   </footer>
 </main>
 
-<!-- CONTENTS — Book One's chapters -->
+<!-- CONTENTS — the current book's chapters -->
 <main class="contents is-hidden" id="contents">
   <div class="contents__head">
     <a class="contents__back" href="#hero">← All books</a>
-    <h2>Book One<span class="contents__count" id="stat-chapters"></span></h2>
+    <h2><span id="contentsTitle">Book One</span><span class="contents__count" id="stat-chapters"></span></h2>
     <label class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="search" id="tocSearch" placeholder="Search chapters…" aria-label="Search chapters">
@@ -81,7 +81,7 @@
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="#hero" class="crumbs__link">The Masnavī</a>
       <span class="crumbs__sep" aria-hidden="true">›</span>
-      <a href="#contents" class="crumbs__link">Book One</a>
+      <a href="#book/1" class="crumbs__link" id="crumbBook">Book One</a>
       <span class="crumbs__sep" aria-hidden="true">›</span>
       <span class="crumbs__here" id="readerCrumb" aria-current="page"></span>
     </nav>
