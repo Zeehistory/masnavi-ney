@@ -164,6 +164,8 @@
     const prev = BOOK.chapters[idx - 1];
     const next = BOOK.chapters[idx + 1];
 
+    const notes = [];   // collected footnotes for this chapter
+
     let html = "";
     html += '<div class="chapter__eyebrow">Chapter ' + (idx + 1) +
             " of " + BOOK.chapters.length + "</div>";
@@ -173,24 +175,31 @@
     ch.sections.forEach((sec) => {
       html += '<section class="section">';
       if (sec.heading) html += '<h2 class="section__head">' + escapeHTML(sec.heading) + "</h2>";
-      sec.paras.forEach((p) => { html += "<p>" + escapeHTML(p) + "</p>"; });
+      sec.paras.forEach((p) => { html += renderParagraph(p, notes); });
       html += "</section>";
     });
 
+    // Footnotes, gathered cleanly at the end of the chapter
+    if (notes.length) {
+      html += '<section class="notes"><h2 class="notes__head">Notes</h2><ol class="notes__list">';
+      notes.forEach((n, i) => {
+        html += '<li id="fn-' + (i + 1) + '" class="notes__item">' + n +
+                ' <a class="notes__back" href="#fnref-' + (i + 1) + '" aria-label="Back to text">↩</a></li>';
+      });
+      html += "</ol></section>";
+    }
+
+    // Minimal prev / next
     html += '<nav class="chapter__nav">';
-    if (prev) {
-      html += '<a class="prev" href="#read/' + prev.id + '"><span class="dir">← Previous</span>' +
-              '<span class="name">' + escapeHTML(prev.title) + "</span></a>";
-    } else {
-      html += '<a class="prev is-empty"></a>';
-    }
-    if (next) {
-      html += '<a class="next" href="#read/' + next.id + '"><span class="dir">Next →</span>' +
-              '<span class="name">' + escapeHTML(next.title) + "</span></a>";
-    } else {
-      html += '<a class="next" href="#contents"><span class="dir">End →</span>' +
-              '<span class="name">Back to contents</span></a>';
-    }
+    html += prev
+      ? '<a class="prev" href="#read/' + prev.id + '"><span class="dir">← Previous</span>' +
+        '<span class="name">' + escapeHTML(prev.title) + "</span></a>"
+      : '<span class="prev is-empty"></span>';
+    html += next
+      ? '<a class="next" href="#read/' + next.id + '"><span class="dir">Next →</span>' +
+        '<span class="name">' + escapeHTML(next.title) + "</span></a>"
+      : '<a class="next" href="#contents"><span class="dir">End →</span>' +
+        '<span class="name">Back to contents</span></a>';
     html += "</nav>";
 
     el.body.innerHTML = html;
@@ -222,6 +231,54 @@
     } else if (e.key === "ArrowLeft" && currentIdx > 0) {
       location.hash = "#read/" + BOOK.chapters[currentIdx - 1].id;
     }
+  }
+
+  // -- Text formatting: Qur'anic citations & footnotes --------------------
+
+  // A parenthetical that names a sura or gives an N:N ayah reference.
+  const CITATION = /\(([^()]*(?:S(?:u|ū)rah?|Qur[’']?an|Quran|[Aa]yat|\d+\s*[:;]\s*\d+)[^()]*)\)/g;
+  // A bracketed translator's note (long enough to be a real note, not an aside).
+  const FOOTNOTE = /\[([^\]]{16,})\]/g;
+
+  // Format inline: pull [notes] into the notes array, wrap (citations).
+  function formatInline(text, notes) {
+    let s = escapeHTML(text);
+
+    // 1) Footnotes → superscript markers, text gathered into `notes`
+    s = s.replace(FOOTNOTE, (_, body) => {
+      notes.push(body.trim());
+      const n = notes.length;
+      return '<sup class="fnref" id="fnref-' + n + '">' +
+             '<a href="#fn-' + n + '">' + n + "</a></sup>";
+    });
+
+    // 2) Qur'anic references → clean citation
+    s = s.replace(CITATION, (m, body) => {
+      // leave alone if the parenthesis is really a sentence, not a reference
+      if (body.length > 60 && !/\d+\s*[:;]\s*\d+/.test(body)) return m;
+      return '<cite class="ref">' + body.trim() + "</cite>";
+    });
+
+    return s;
+  }
+
+  // Decide whether a paragraph is essentially a standalone Qur'anic
+  // quotation (→ blockquote). Kept strict so ordinary commentary that merely
+  // cites a verse stays as prose.
+  function renderParagraph(text, notes) {
+    const html = formatInline(text, notes);
+    const t = text.trim();
+    // Must be a self-contained quote: opens with a quote mark, and the
+    // closing quote sits near the end (right before its citation), and it
+    // carries a Qur'anic reference, and it's longer than ~3 lines.
+    const opensQuote = /^[“"]/.test(t);
+    const closesLate = /[”"]\s*(?:\([^)]*\)|—[^—]*)?\s*[.。]?\s*$/.test(t);
+    const hasRef = CITATION.test(t); CITATION.lastIndex = 0;
+    const longEnough = t.length > 200;
+    if (opensQuote && closesLate && hasRef && longEnough) {
+      return '<blockquote class="ayah">' + html + "</blockquote>";
+    }
+    return "<p>" + html + "</p>";
   }
 
   // -- utils ---------------------------------------------------------------
