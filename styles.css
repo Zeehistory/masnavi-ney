@@ -6,11 +6,20 @@
 /* Mirza sets the macron vowels (ā ī ū) poorly — the macron detaches. Borrow
    Spectral's glyphs for just those code points so accented names render clean
    everywhere the display face is used. "DisplayFix" = Spectral-for-macrons. */
+/* Mirza and Amiri set the macron vowels (ā ī ū) poorly — the macron floats.
+   Borrow Spectral's glyphs for just those code points, in both upright and
+   italic, so accented names render clean wherever they appear. */
 @font-face {
   font-family: "DisplayFix";
   src: url("assets/spectral-ext.woff2") format("woff2");
-  font-display: swap;
-  unicode-range: U+0100-017F, U+1E00-1EFF;   /* Latin Extended-A/Additional (ā ī ū ō ē …) */
+  font-style: normal; font-display: swap;
+  unicode-range: U+0100-017F, U+1E00-1EFF;
+}
+@font-face {
+  font-family: "DisplayFix";
+  src: url("assets/spectral-ext-italic.woff2") format("woff2");
+  font-style: italic; font-display: swap;
+  unicode-range: U+0100-017F, U+1E00-1EFF;
 }
 
 :root {
@@ -53,7 +62,7 @@
      calligraphic DNA (rarely seen on the web); a warm reading serif; and
      Arabic naskh for verse & calligraphy. */
   --display: "DisplayFix", "Mirza", "Amiri", Georgia, serif;
-  --verse:   "Amiri", serif;
+  --verse:   "DisplayFix", "Amiri", serif;
   --body:    "Spectral", Georgia, serif;
   --label:   "Spectral", Georgia, serif;   /* labels are just quiet body type */
 
