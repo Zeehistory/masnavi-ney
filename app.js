@@ -246,7 +246,20 @@
     ch.sections.forEach((sec) => {
       html += '<section class="section">';
       if (sec.heading) html += '<h2 class="section__head">' + escapeHTML(sec.heading) + "</h2>";
-      sec.paras.forEach((p) => { html += renderParagraph(p, notes); });
+      // Render each paragraph. A paragraph that is ENTIRELY a bracketed note
+      // becomes a footnote whose marker attaches to the previous paragraph —
+      // never an orphan "1" line of its own.
+      const blocks = [];
+      sec.paras.forEach((p) => {
+        const marker = standaloneNote(p, notes);
+        if (marker) {
+          // attach to the previous block if there is one; else drop the marker
+          if (blocks.length) blocks[blocks.length - 1] = blocks[blocks.length - 1].replace(/<\/(p|blockquote)>$/, marker + "</$1>");
+        } else {
+          blocks.push(renderParagraph(p, notes));
+        }
+      });
+      html += blocks.join("");
       html += "</section>";
     });
 
@@ -320,31 +333,37 @@
 
   const AR_PARTICLES = new Set(("wa al bil min an fa il ith inna inn maa mai un ala alaa " +
     "lil lit li zaati huwa hum ilaihi bisultaan bin fii ala ‘ala hal la laa illa wal alas " +
-    "ith idh ilman ladunna").split(" "));
+    "ith idh ilman ladunna ya bi fil wal lakum lakumu hum antum nahnu qad").split(" "));
   // small connector words allowed to sit inside a transliterated run
-  const AR_GLUE = new Set(["a", "an", "al", "il", "the", "of", "and", "min", "wa", "fa", "li"]);
+  const AR_GLUE = new Set(["a", "an", "al", "il", "the", "of", "and", "min", "wa", "fa", "li", "bi", "ya"]);
 
-  // Common English words that would otherwise trip the Arabic heuristics
-  // (digraphs like "th", possessive "'s", doubled vowels in "cave"/"see").
-  const EN_STOP = new Set(("the of and to in a an is was that this with for his her him " +
-    "they them their god gods lord thee thou you your our we he she it as at by on or " +
-    "not but from which who whom whose when then than there here").split(" "));
+  // Common English words that would otherwise trip the Arabic heuristics.
+  const EN_STOP = new Set(("the of and to in a an is was were be been being that this these " +
+    "those with for his her him they them their its our your my we he she it as at by on or " +
+    "not but from which who whom whose when then than there here what how why all any each " +
+    "such only own into out up down over under also more most very can will would should " +
+    "may might must shall now new one two four five six").split(" "));
 
-  // Score how "Arabic" a single word looks. Possessive 's and ordinary English
-  // are explicitly excluded so English never scores.
+  // Score how "Arabic" a single transliterated word looks. English is excluded.
   function arScore(w) {
     const raw = w.toLowerCase();
-    // strip a trailing possessive so "God's" -> "god"
-    const base = raw.replace(/[’‘']s$/, "");
+    const base = raw.replace(/[’‘']s$/, "");       // drop possessive
     const wl = base.replace(/[’‘'\-]/g, "");
+    if (!wl) return 0;
     if (EN_STOP.has(wl)) return 0;
-    if (/^[A-Z]/.test(w) && !AR_PARTICLES.has(wl)) return 0;  // Capitalized English
+    // "Al" at a sentence start is the Arabic article, not English
+    if (/^[A-Z]/.test(w) && !AR_PARTICLES.has(wl) && wl !== "al") {
+      // a capitalized word can still be Arabic if it has strong Arabic tells
+      if (!/[’‘']|aa|ii|uu/.test(base)) return 0;
+    }
     let s = 0;
     if (AR_PARTICLES.has(wl)) s += 2;
-    // interior hamza only (not a trailing possessive, already stripped)
-    if (/[a-z][’‘'][a-z]/i.test(base)) s += 2;
-    if (/(aa|ii|uu)/.test(wl)) s += 2;          // doubled vowels — strong tell
-    if (/(dh|kh|gh|zh)/.test(wl)) s += 1;       // Arabic digraphs (not plain "th")
+    if (wl === "al") s += 2;                        // the article
+    if (/[a-z][’‘'][a-z]/i.test(base)) s += 2;      // interior hamza
+    if (/(aa|ii|uu)/.test(wl)) s += 2;              // doubled vowels
+    if (/(dh|kh|gh|zh|sh|th|kh)/.test(wl)) s += 1;  // Arabic-ish digraphs
+    if (/(un|an|in)$/.test(wl) && wl.length > 3) s += 1;  // case endings -un/-an/-in
+    if (/(u|a|i)$/.test(wl) && wl.length > 4 && !EN_STOP.has(wl)) s += 1; // vowel-final
     return s;
   }
   const isWordChar = (ch) => /[a-zā-ūA-Z’‘'\-]/.test(ch);
@@ -390,8 +409,15 @@
     };
     for (let k = 0; k < words.length; k++) {
       const glue = AR_GLUE.has(words[k].t.toLowerCase());
-      if (words[k].sc >= 1 || (glue && run.length)) run.push(k);
-      else flush();
+      if (words[k].sc >= 1 || (glue && run.length)) {
+        run.push(k);
+      } else if (run.length && k + 1 < words.length && words[k + 1].sc >= 2 &&
+                 words[k].t.length <= 9 && !EN_STOP.has(words[k].t.toLowerCase())) {
+        // bridge a single non-English gap word between two Arabic words
+        run.push(k);
+      } else {
+        flush();
+      }
     }
     flush();
     // rebuild, inserting <i> around marked runs
@@ -405,6 +431,18 @@
       if (wd.closeI) out += "</i>";
     }
     return out;
+  }
+
+  // If a paragraph is essentially just a bracketed note, register it as a
+  // footnote and return the superscript marker (to attach to the previous
+  // paragraph). Returns "" otherwise.
+  function standaloneNote(text, notes) {
+    const t = text.trim();
+    const m = t.match(/^\[(.+)\]\s*[.:,;]?\s*$/s);
+    if (!m || m[1].length < 16) return "";
+    notes.push(m[1].trim());
+    const n = notes.length;
+    return '<sup class="fnref" id="fnref-' + n + '"><a href="#fn-' + n + '">' + n + "</a></sup>";
   }
 
   // Format inline: footnotes, transliterations, then citations.
