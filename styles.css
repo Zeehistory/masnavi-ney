@@ -393,18 +393,36 @@ a { color: inherit; text-decoration: none; }
 }
 /* A restrained drop-cap opens each chapter */
 .section:first-of-type p:first-of-type::first-letter {
-  font-family: var(--display); font-weight: 500;
-  font-size: 3.4rem; line-height: .78; float: left;
-  padding: .35rem .5rem 0 0; color: var(--gold);
+  font-family: var(--body);            /* Spectral sits tighter than Gulzar */
+  font-weight: 500;
+  font-size: 3.2em; line-height: .8; float: left;
+  margin: .02em .12em 0 0;             /* snug to the following text */
+  color: var(--gold);
 }
 
-/* Qur'anic citation — a quiet, clean reference set off in the accent gold */
+/* Qur'anic citation — one harmonized form, clearly set apart:
+   a small pill with the source label and the chapter:verse location. */
 .ref {
+  display: inline-flex; align-items: baseline; gap: .4em;
   font-family: var(--label); font-style: normal;
-  font-size: .82em; color: var(--gold);
+  font-size: .78em; line-height: 1;
   white-space: nowrap;
+  margin: 0 .1em; padding: .15em .55em;
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  border-radius: 999px;
+  vertical-align: baseline;
+  transform: translateY(-.05em);
 }
-.ref::before { content: "— "; color: var(--ink-soft); }
+.ref__book {
+  color: var(--gold); font-variant: small-caps; letter-spacing: .03em;
+}
+.ref__loc { color: var(--ink-soft); }
+
+/* Transliteration — set apart and italic */
+.translit {
+  font-family: var(--verse); font-style: italic;
+  color: var(--gold);
+}
 
 /* A longer Qur'anic quotation, set as a blockquote */
 .ayah {
@@ -413,8 +431,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--verse); font-style: italic;
   font-size: 1.12em; line-height: 1.7; color: var(--ink);
 }
-.ayah .ref { display: block; margin-top: .6rem; font-style: normal; }
-.ayah .ref::before { content: ""; }
+.ayah .ref { margin-top: .6rem; }
 
 /* Footnote reference — a small superscript marker */
 .fnref { font-size: .7em; line-height: 0; vertical-align: super; }
@@ -441,6 +458,13 @@ a { color: inherit; text-decoration: none; }
 .notes__item::marker { color: var(--gold); }
 .notes__back { color: var(--gold); margin-left: .35rem; text-decoration: none; }
 .notes__back:hover { text-decoration: underline; }
+/* brief highlight when you jump to a footnote or back to its marker */
+.is-flash { animation: flash 1.2s var(--ease); border-radius: 4px; }
+@keyframes flash {
+  0%, 30% { background: color-mix(in srgb, var(--gold) 22%, transparent); }
+  100% { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .is-flash { animation: none; } }
 
 /* Minimal prev / next — plain text links, no boxes */
 .chapter__nav {

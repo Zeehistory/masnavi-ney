@@ -75,6 +75,16 @@
 
   function route() {
     const hash = location.hash || "#hero";
+    // In-page anchors (footnotes) — scroll, don't route.
+    if (/^#fn-\d+$/.test(hash) || /^#fnref-\d+$/.test(hash)) {
+      const target = document.getElementById(hash.slice(1));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.add("is-flash");
+        setTimeout(() => target.classList.remove("is-flash"), 1200);
+      }
+      return;
+    }
     if (hash === "#hero" || hash === "") {
       show(el.hero);
     } else if (hash === "#contents") {
@@ -240,7 +250,11 @@
   // A bracketed translator's note (long enough to be a real note, not an aside).
   const FOOTNOTE = /\[([^\]]{16,})\]/g;
 
-  // Format inline: pull [notes] into the notes array, wrap (citations).
+  // An Arabic transliteration phrase sitting between a closing quote and its
+  // citation — a run of lowercase words with the tell-tale ‘ ’ hamza marks.
+  const TRANSLIT = /(&#8221;|”|")(\s+)([a-z][a-zā-ū‘’' -]*['‘’][a-zā-ū‘’' -]*?)(\s*)(?=\()/g;
+
+  // Format inline: footnotes, transliterations, then citations.
   function formatInline(text, notes) {
     let s = escapeHTML(text);
 
@@ -252,14 +266,47 @@
              '<a href="#fn-' + n + '">' + n + "</a></sup>";
     });
 
-    // 2) Qur'anic references → clean citation
+    // 2) Transliteration between a closing quote and its citation → italic,
+    //    set apart on its own with a subtle label.
+    s = s.replace(TRANSLIT, (m, q, sp, phrase) => {
+      const clean = phrase.trim();
+      // guard: real transliteration has a hamza and isn't ordinary English
+      if (clean.length < 6 || !/['‘’]/.test(clean)) return m;
+      return q + ' <span class="translit">' + clean + "</span> ";
+    });
+
+    // 3) Qur'anic references → one harmonized, clearly separated citation
     s = s.replace(CITATION, (m, body) => {
-      // leave alone if the parenthesis is really a sentence, not a reference
       if (body.length > 60 && !/\d+\s*[:;]\s*\d+/.test(body)) return m;
-      return '<cite class="ref">' + body.trim() + "</cite>";
+      const ref = normalizeRef(body);
+      if (!ref) return m;
+      return '<cite class="ref"><span class="ref__book">Qurʼān</span>' +
+             '<span class="ref__loc">' + ref + "</span></cite>";
     });
 
     return s;
+  }
+
+  // Harmonize every citation to a single clean form: "Name chapter:verse".
+  // Strips the inconsistent "Surah"/"Quran" prefixes, tidies spacing.
+  function normalizeRef(raw) {
+    let s = raw.trim();
+    s = s.replace(/^\s*Qur[’']?an\s*[:\-]?\s*/i, "");
+    s = s.replace(/\bS(?:u|ū)rah?\s*[:\-]?\s*/gi, "");
+    s = s.replace(/;/g, ":");
+    s = s.replace(/\s{2,}/g, " ").trim().replace(/^[:\-\s]+/, "");
+    // Split into a name part and a numeric part.
+    const m = s.match(/^([^\d]*?)[\s:\-]*(\d.*)$/);
+    if (m) {
+      const name = m[1].trim().replace(/[:\-\s]+$/, "");
+      // numbers: tidy "ch : vs" -> "ch:vs", ", " between verses, " & "
+      const nums = m[2].trim()
+        .replace(/\s*:\s*/g, ":")
+        .replace(/\s*,\s*/g, ", ")
+        .replace(/\s*&\s*/g, " & ");
+      return name ? name + " " + nums : nums;   // always a space after the name
+    }
+    return s.replace(/\s*:\s*/g, ":").replace(/,\s*/g, ", ");
   }
 
   // Decide whether a paragraph is essentially a standalone Qur'anic
