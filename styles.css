@@ -152,9 +152,29 @@ a { color: inherit; text-decoration: none; }
 }
 .book--live .book__status { color: var(--gold); }
 
-.home__foot {
-  text-align: center; margin: 3rem 0 0;
-  font-family: var(--body); font-size: .9rem; color: var(--slate-dim);
+/* Colophon — the translator and institute, set quietly beneath the books */
+.colophon {
+  text-align: center;
+  margin: clamp(3rem, 7vw, 4.5rem) auto 0;
+  display: grid; justify-items: center; gap: .35rem;
+}
+.colophon__rule {
+  width: 14px; height: 14px; margin-bottom: 1.5rem;
+  background: var(--gold);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.colophon__line {
+  margin: 0; font-family: var(--verse); font-style: italic;
+  font-size: 1rem; color: var(--slate);
+}
+.colophon__name {
+  margin: 0; font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem); color: var(--parchment);
+}
+.colophon__org {
+  margin: .25rem 0 0; font-family: var(--body);
+  font-size: .95rem; color: var(--gold);
 }
 
 @media (max-width: 560px) {
