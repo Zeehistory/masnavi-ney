@@ -16,20 +16,29 @@
 <!-- HOME — the library of the six Books (Daftars) -->
 <main class="home" id="hero">
   <header class="home__head">
+    <svg class="dome" viewBox="0 0 120 96" aria-hidden="true" focusable="false">
+      <!-- the fluted Green Dome of the Mevlâna mausoleum, Konya -->
+      <path class="dome__finial" d="M60 4 v14 M54 12 h12" />
+      <path class="dome__cone" d="M36 92 C36 52 44 20 60 8 C76 20 84 52 84 92" />
+      <path class="dome__flute" d="M48 92 C48 50 52 24 60 10" />
+      <path class="dome__flute" d="M60 92 V10" />
+      <path class="dome__flute" d="M72 92 C72 50 68 24 60 10" />
+      <path class="dome__base" d="M30 92 h60" />
+    </svg>
     <p class="bismillah" lang="ar" dir="rtl" title="In the name of God, the Most Gracious, the Most Merciful">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
-    <h1 class="home__title">The Masnavī</h1>
-    <p class="home__by">Jalāl al-Dīn Rūmī · a translation &amp; commentary</p>
+    <h1 class="home__title">The Masnav<span class="glyph-i">ī</span></h1>
+    <p class="home__by">Jalāl al-Dīn Rūmī</p>
+
+    <div class="credit">
+      <span class="credit__label">Translated with commentary by</span>
+      <span class="credit__name">Iqbal Ahmed Shariff</span>
+      <span class="credit__org">Al Ghazali Institute · Bangalore, India</span>
+    </div>
+
     <p class="home__lede">The Masnavī-yi Ma‘navī is composed in six books (daftars) of rhyming couplets — some twenty-five thousand verses of stories, teaching, and the longing of the reed for its reed-bed. Choose a book to begin.</p>
   </header>
 
   <ul class="books" id="books"></ul>
-
-  <footer class="colophon">
-    <span class="colophon__rule" aria-hidden="true"></span>
-    <p class="colophon__line">Translation &amp; commentary by</p>
-    <p class="colophon__name">Iqbal Ahmed Shariff</p>
-    <p class="colophon__org">Al Ghazali Institute · Bangalore, India</p>
-  </footer>
 </main>
 
 <!-- CONTENTS — Book One's chapters -->

@@ -4,22 +4,30 @@
    ========================================================================== */
 
 :root {
-  /* Ground & surfaces — İznik cobalt */
-  --night:      #0b2e52;   /* saraylı cobalt — the deep tile blue */
-  --night-2:    #103a63;   /* raised panels */
-  --night-3:    #1b4f7d;   /* hover / borders */
-  --parchment:  #faf6ec;   /* tile-white slip — the reading surface */
-  --parchment-2:#efe7d2;
+  /* Ground & surfaces — the deep blue of a Konya night, ground for the
+     Green Dome (Kubbe-i Hadra) of Rūmī's mausoleum. */
+  --night:      #0a2740;   /* deep midnight-teal ground */
+  --night-2:    #0f3350;   /* raised panels */
+  --night-3:    #1c4a63;   /* hover / borders */
+  --parchment:  #f7f3e8;   /* tile-white slip — the reading surface */
+  --parchment-2:#e8e0cd;
 
   /* Ink & voices */
   --ink:        #10293c;   /* deep teal-ink body text */
   --ink-soft:   #3f5f70;   /* secondary on tile-white */
-  --gold:       #e0a92e;   /* saffron gold — the accent */
-  --gold-soft:  #f2cf6b;
-  --slate:      #4bb0bd;   /* İznik turquoise — muted text on cobalt */
-  --slate-dim:  #2c7d8c;
-  --madder:     #c1272d;   /* İznik coral-red — rare emphasis */
-  --cream-dim:  #dce9ec;   /* pale turquoise-white text on cobalt */
+
+  /* THE SIGNATURE — Konya green, the glazed turquoise-green of the dome.
+     (Kept under the --gold names so every accent flips to green at once.) */
+  --gold:       #14a08a;   /* dome green — the accent */
+  --gold-soft:  #35c3ab;   /* brighter green for hover/highlights */
+  --accent:     #14a08a;
+  --accent-soft:#35c3ab;
+  --accent-deep:#0c6f60;   /* deep jade for medallions */
+
+  --slate:      #7fa9b0;   /* soft grey-teal — muted text on the ground */
+  --slate-dim:  #4d7f86;
+  --madder:     #c1272d;   /* rare warm emphasis */
+  --cream-dim:  #dfe9e7;   /* pale text on the ground */
 
   /* Type — a literary old-style display, a warm reading serif, a naskh face */
   --display: "Fraunces", Georgia, serif;
@@ -51,17 +59,17 @@ body {
   overflow-x: hidden;
 }
 
-::selection { background: rgba(224,169,46,.32); color: #fff; }
+::selection { background: rgba(20,160,138,.30); color: #fff; }
 
 a { color: inherit; text-decoration: none; }
 
-/* İznik geometric lattice — 8-pointed stars (khatim) over the cobalt ground.
-   An SVG tile in turquoise + saffron, repeated. */
+/* Geometric lattice — 8-pointed stars (khatim) in the dome-green, over the
+   deep ground. A whisper, masked away from the reading column. */
 .starfield {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: .1;                 /* a whisper — never competes with text */
+  opacity: .12;                /* a whisper — never competes with text */
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234bb0bd' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%23e0a92e' stroke-opacity='0.6'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%23e0a92e'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2335c3ab' stroke-width='1'%3E%3Cpath d='M60 8 L74 46 L112 60 L74 74 L60 112 L46 74 L8 60 L46 46 Z'/%3E%3Cpath d='M60 20 L69 51 L100 60 L69 69 L60 100 L51 69 L20 60 L51 51 Z' stroke='%2314a08a' stroke-opacity='0.7'/%3E%3Ccircle cx='60' cy='60' r='6' stroke='%2314a08a'/%3E%3Cpath d='M0 60 L20 60 M100 60 L120 60 M60 0 L60 20 M60 100 L60 120'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px 200px;
   /* fade the pattern toward the center so reading columns stay clean */
@@ -79,6 +87,19 @@ a { color: inherit; text-decoration: none; }
 }
 .home__head { text-align: center; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
 
+/* The Green Dome of Rūmī's mausoleum — the site's signature mark */
+.dome {
+  display: block; margin: 0 auto 1.5rem;
+  width: clamp(56px, 12vw, 76px); height: auto;
+  fill: none;
+  stroke: var(--accent); stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.dome__cone { stroke-width: 2.8; }
+.dome__flute { stroke: var(--accent); stroke-width: 1.4; opacity: .55; }
+.dome__finial { stroke: var(--accent-soft); stroke-width: 2.2; }
+.dome__base { stroke: var(--accent); stroke-width: 2.8; }
+
 /* Bismillah — real Arabic calligraphy (Aref Ruqaa), gold, centered */
 .bismillah {
   margin: 0 0 2rem; text-align: center;
@@ -91,13 +112,37 @@ a { color: inherit; text-decoration: none; }
 .home__title {
   font-family: var(--display); font-weight: 400;
   font-size: clamp(2.6rem, 8vw, 4.5rem); line-height: 1;
-  color: var(--parchment); margin: 0 0 .75rem;
-  letter-spacing: -.01em;
+  color: var(--parchment); margin: 0 0 .6rem;
 }
+/* Render the long-i in a face that sets its macron cleanly (Fraunces floats it) */
+.glyph-i { font-family: var(--body); font-style: normal; }
 .home__by {
   font-family: var(--verse); font-style: italic;
   font-size: clamp(1rem, 2.4vw, 1.25rem);
-  color: var(--gold); margin: 0 0 1.5rem;
+  color: var(--accent); margin: 0 0 1.75rem;
+}
+
+/* Translator credit — prominent, a proper part of the masthead */
+.credit {
+  display: grid; justify-items: center; gap: .3rem;
+  margin: 0 auto 2rem;
+  padding: 1.4rem 1.75rem;
+  border: 1px solid var(--night-3); border-radius: 14px;
+  background: var(--night-2);
+  max-width: 30rem;
+}
+.credit__label {
+  font-family: var(--verse); font-style: italic;
+  font-size: .95rem; color: var(--slate);
+}
+.credit__name {
+  font-family: var(--display); font-weight: 500;
+  font-size: clamp(1.5rem, 4.5vw, 2rem); line-height: 1.1;
+  color: var(--parchment);
+}
+.credit__org {
+  font-family: var(--body); font-size: 1rem; color: var(--accent);
+  margin-top: .15rem;
 }
 .home__lede {
   font-family: var(--body);
@@ -135,12 +180,14 @@ a { color: inherit; text-decoration: none; }
 .book__meta { min-width: 0; }
 .book__name {
   font-family: var(--display); font-weight: 400;
-  font-size: clamp(1.15rem, 2.6vw, 1.4rem); line-height: 1.2;
+  font-size: clamp(1.15rem, 2.6vw, 1.4rem); line-height: 1.3;
   color: var(--parchment); margin: 0;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
 }
 .book__ar {
   font-family: "Aref Ruqaa", var(--verse), serif;
-  font-size: 1.1rem; color: var(--gold); margin-inline-start: .5rem;
+  font-size: 1.25rem; color: var(--accent);
+  flex: 0 0 auto;
 }
 .book__desc {
   font-family: var(--body); font-size: .92rem; line-height: 1.5;
@@ -151,31 +198,6 @@ a { color: inherit; text-decoration: none; }
   color: var(--slate); white-space: nowrap;
 }
 .book--live .book__status { color: var(--gold); }
-
-/* Colophon — the translator and institute, set quietly beneath the books */
-.colophon {
-  text-align: center;
-  margin: clamp(3rem, 7vw, 4.5rem) auto 0;
-  display: grid; justify-items: center; gap: .35rem;
-}
-.colophon__rule {
-  width: 14px; height: 14px; margin-bottom: 1.5rem;
-  background: var(--gold);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-.colophon__line {
-  margin: 0; font-family: var(--verse); font-style: italic;
-  font-size: 1rem; color: var(--slate);
-}
-.colophon__name {
-  margin: 0; font-family: var(--display); font-weight: 400;
-  font-size: clamp(1.35rem, 3.5vw, 1.75rem); color: var(--parchment);
-}
-.colophon__org {
-  margin: .25rem 0 0; font-family: var(--body);
-  font-size: .95rem; color: var(--gold);
-}
 
 @media (max-width: 560px) {
   .book { grid-template-columns: 2.75rem 1fr; gap: 1rem; padding: 1.15rem; }
