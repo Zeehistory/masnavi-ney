@@ -250,29 +250,93 @@
   // A bracketed translator's note (long enough to be a real note, not an aside).
   const FOOTNOTE = /\[([^\]]{16,})\]/g;
 
-  // A candidate transliteration phrase: a lowercase run ending just before a
-  // ":" gloss or a "(" citation, often after a comma or "said".
-  const TRANSLIT_CAND = /(^|[,;:]\s|said[,:]?\s|:\s)([a-z][a-zā-ū’‘'\- ]{5,}?)\s*(?=[:(])/g;
   const AR_PARTICLES = new Set(("wa al bil min an fa il ith inna inn maa mai un ala alaa " +
-    "lil lit li zaati huwa hum ilaihi bisultaan").split(" "));
+    "lil lit li zaati huwa hum ilaihi bisultaan bin fii ala ‘ala hal la laa illa wal alas " +
+    "ith idh ilman ladunna").split(" "));
+  // small connector words allowed to sit inside a transliterated run
+  const AR_GLUE = new Set(["a", "an", "al", "il", "the", "of", "and", "min", "wa", "fa", "li"]);
 
-  // Score how "Arabic" a single word looks.
+  // Common English words that would otherwise trip the Arabic heuristics
+  // (digraphs like "th", possessive "'s", doubled vowels in "cave"/"see").
+  const EN_STOP = new Set(("the of and to in a an is was that this with for his her him " +
+    "they them their god gods lord thee thou you your our we he she it as at by on or " +
+    "not but from which who whom whose when then than there here").split(" "));
+
+  // Score how "Arabic" a single word looks. Possessive 's and ordinary English
+  // are explicitly excluded so English never scores.
   function arScore(w) {
-    const wl = w.toLowerCase().replace(/[’‘']/g, "");
+    const raw = w.toLowerCase();
+    // strip a trailing possessive so "God's" -> "god"
+    const base = raw.replace(/[’‘']s$/, "");
+    const wl = base.replace(/[’‘'\-]/g, "");
+    if (EN_STOP.has(wl)) return 0;
+    if (/^[A-Z]/.test(w) && !AR_PARTICLES.has(wl)) return 0;  // Capitalized English
     let s = 0;
     if (AR_PARTICLES.has(wl)) s += 2;
-    if (/[’‘']/.test(w)) s += 2;              // interior hamza
-    if (/(aa|ii|uu)/.test(wl)) s += 1;         // doubled vowels
-    if (/(dh|kh|gh|zh|th)/.test(wl)) s += 1;   // digraphs
+    // interior hamza only (not a trailing possessive, already stripped)
+    if (/[a-z][’‘'][a-z]/i.test(base)) s += 2;
+    if (/(aa|ii|uu)/.test(wl)) s += 2;          // doubled vowels — strong tell
+    if (/(dh|kh|gh|zh)/.test(wl)) s += 1;       // Arabic digraphs (not plain "th")
     return s;
   }
-  // Is this whole phrase a transliteration (not ordinary English)?
-  function isTranslit(phrase) {
-    const words = phrase.split(/[ \-]+/).filter(Boolean);
-    if (words.length < 2) return false;
-    let total = 0, strong = 0;
-    for (const w of words) { const sc = arScore(w); total += sc; if (sc >= 2) strong++; }
-    return strong >= 1 && total >= Math.max(3, words.length);
+  const isWordChar = (ch) => /[a-zā-ūA-Z’‘'\-]/.test(ch);
+
+  // Sweep a paragraph and italicize every maximal run of transliterated words,
+  // wherever it appears (after a quote, mid-sentence, before a citation…).
+  function markTransliterations(escaped) {
+    // tokenize into words and the gaps between them
+    const tokens = [];
+    let i = 0;
+    while (i < escaped.length) {
+      if (isWordChar(escaped[i])) {
+        let j = i; while (j < escaped.length && isWordChar(escaped[j])) j++;
+        tokens.push({ w: true, t: escaped.slice(i, j) });
+        i = j;
+      } else {
+        let j = i; while (j < escaped.length && !isWordChar(escaped[j])) j++;
+        tokens.push({ w: false, t: escaped.slice(i, j) });
+        i = j;
+      }
+    }
+    const words = tokens.filter((x) => x.w);
+    // score each word
+    words.forEach((x) => { x.sc = arScore(x.t); });
+    // find runs
+    let out = "";
+    let run = [];      // indices into `words`
+    const flush = () => {
+      if (!run.length) return;
+      // trim leading/trailing glue-only words from the run
+      let a = 0, b = run.length - 1;
+      const isGlue = (k) => AR_GLUE.has(words[k].t.toLowerCase()) && words[k].sc < 2;
+      while (a <= b && isGlue(run[a])) a++;
+      while (b >= a && isGlue(run[b])) b--;
+      const core = run.slice(a, b + 1);
+      let total = 0, strong = 0;
+      core.forEach((k) => { total += words[k].sc; if (words[k].sc >= 2) strong++; });
+      if (core.length >= 2 && strong >= 2 && total >= core.length + 2) {
+        words[core[0]].openI = true;
+        words[core[core.length - 1]].closeI = true;
+      }
+      run = [];
+    };
+    for (let k = 0; k < words.length; k++) {
+      const glue = AR_GLUE.has(words[k].t.toLowerCase());
+      if (words[k].sc >= 1 || (glue && run.length)) run.push(k);
+      else flush();
+    }
+    flush();
+    // rebuild, inserting <i> around marked runs
+    let wi = -1;
+    for (const tok of tokens) {
+      if (!tok.w) { out += tok.t; continue; }
+      wi++;
+      const wd = words[wi];
+      if (wd.openI) out += '<i class="translit">';
+      out += tok.t;
+      if (wd.closeI) out += "</i>";
+    }
+    return out;
   }
 
   // Format inline: footnotes, transliterations, then citations.
@@ -287,12 +351,8 @@
              '<a href="#fn-' + n + '">' + n + "</a></sup>";
     });
 
-    // 2) Arabic transliterations → italic, clearly set apart
-    s = s.replace(TRANSLIT_CAND, (m, lead, phrase) => {
-      const clean = phrase.trim();
-      if (!isTranslit(clean)) return m;
-      return lead + '<i class="translit">' + clean + "</i>";
-    });
+    // 2) Arabic transliterations → italic, wherever they appear
+    s = markTransliterations(s);
 
     // 3) Qur'anic references → one harmonized, clearly separated citation
     s = s.replace(CITATION, (m, body) => {
