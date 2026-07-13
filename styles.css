@@ -328,44 +328,44 @@ a { color: inherit; text-decoration: none; }
 
 .reader__bar {
   position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; gap: 1rem;
-  padding: .7rem clamp(.9rem, 4vw, 2rem);
-  background: color-mix(in srgb, var(--parchment) 88%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--parchment-2);
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: .85rem clamp(1rem, 4vw, 2rem);
+  background: color-mix(in srgb, var(--parchment) 90%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--parchment-2) 45%, transparent);
 }
-/* Chapters button — the primary navigator, always reachable */
+/* Minimal Chapters control — no pill, just an icon + quiet label */
 .navbtn {
-  display: inline-flex; align-items: center; gap: .5rem;
-  font-family: var(--body); font-size: .9rem;
-  color: var(--ink); background: none;
-  border: 1px solid var(--parchment-2); border-radius: 999px;
-  padding: .5rem .95rem; cursor: pointer;
-  transition: border-color .25s var(--ease), color .25s var(--ease);
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: var(--body); font-size: .95rem;
+  color: var(--ink-soft); background: none;
+  border: none; padding: .25rem; margin: -.25rem; cursor: pointer;
+  transition: color .2s var(--ease);
   -webkit-tap-highlight-color: transparent;
 }
-.navbtn:hover, .navbtn:focus-visible { border-color: var(--gold); color: var(--gold); }
+.navbtn svg { opacity: .75; }
+.navbtn:hover, .navbtn:focus-visible { color: var(--gold); }
 /* Breadcrumb — the way back. Each level is tappable; the chapter is the tail. */
 .crumbs {
   flex: 1; min-width: 0;
-  display: flex; align-items: baseline; gap: .5rem;
-  font-family: var(--body); font-size: .95rem;
+  display: flex; align-items: baseline; gap: .6rem;
+  font-family: var(--body); font-size: .9rem;
   overflow: hidden;
 }
-.crumbs__link { color: var(--ink-soft); transition: color .2s var(--ease); flex: 0 0 auto; }
-.crumbs__link:hover { color: var(--gold); }
-.crumbs__sep { color: var(--parchment-2); flex: 0 0 auto; }
+.crumbs__link {
+  color: var(--ink-soft); opacity: .7; flex: 0 0 auto;
+  transition: opacity .2s var(--ease), color .2s var(--ease);
+}
+.crumbs__link:hover { opacity: 1; color: var(--gold); }
+.crumbs__sep { color: var(--ink-soft); opacity: .35; flex: 0 0 auto; font-size: .8em; }
 .crumbs__here {
-  color: var(--ink); font-style: italic; font-family: var(--verse);
+  color: var(--ink); font-style: italic; font-family: var(--verse); font-size: 1.05rem;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
 }
-@media (max-width: 640px) {
+@media (max-width: 720px) {
   .navbtn span { display: none; }               /* icon-only on phones */
-  .navbtn { padding: .5rem; }
-  /* on phones, collapse the crumb to just the current chapter */
+  /* on phones, show only the current chapter — cleanest possible */
   .crumbs__link, .crumbs__sep { display: none; }
-  .crumbs__link:first-child { display: inline; }  /* keep 'The Masnavī' as home */
-  .crumbs__sep:first-of-type { display: inline; }
 }
 
 /* progress rail across the very top */
