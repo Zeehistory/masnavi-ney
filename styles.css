@@ -8,7 +8,8 @@
    everywhere the display face is used. "DisplayFix" = Spectral-for-macrons. */
 @font-face {
   font-family: "DisplayFix";
-  src: local("Spectral"), local("Spectral-Regular");
+  src: url("assets/spectral-ext.woff2") format("woff2");
+  font-display: swap;
   unicode-range: U+0100-017F, U+1E00-1EFF;   /* Latin Extended-A/Additional (ā ī ū ō ē …) */
 }
 
@@ -121,18 +122,20 @@ a { color: inherit; text-decoration: none; }
 }
 .home__head > * { position: relative; }
 
-/* The Green Dome of Rūmī's mausoleum — the site's signature mark */
+/* The Mevlâna mausoleum, Konya — the site's signature mark */
 .dome {
-  display: block; margin: 0 auto 1.5rem;
-  width: clamp(56px, 12vw, 76px); height: auto;
+  display: block; margin: 0 auto 1.25rem;
+  width: clamp(64px, 13vw, 88px); height: auto;
   fill: none;
-  stroke: var(--warm); stroke-width: 2.4;
+  stroke: var(--warm); stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
-.dome__cone { stroke-width: 2.8; }
-.dome__flute { stroke: var(--warm); stroke-width: 1.4; opacity: .5; }
-.dome__finial { stroke: var(--accent-soft); stroke-width: 2.2; }
-.dome__base { stroke: var(--warm); stroke-width: 2.8; }
+.dome__cone { stroke: var(--warm); stroke-width: 2.4; }
+.dome__flute { stroke: var(--warm); stroke-width: 1; opacity: .45; }
+.dome__finial { stroke: var(--warm-soft); stroke-width: 2; }
+.dome__drum, .dome__base { stroke: var(--warm); stroke-width: 2; }
+.dome__band { stroke: var(--warm); stroke-width: 1; opacity: .55; }
+.dome__minaret { stroke: var(--warm); stroke-width: 1.6; opacity: .8; }
 
 /* Bismillah — real Arabic calligraphy (Aref Ruqaa), gold, centered */
 .bismillah {
@@ -167,27 +170,27 @@ a { color: inherit; text-decoration: none; }
   color: var(--warm-soft); border-bottom-color: var(--warm-soft);
 }
 
-/* Translator credit — prominent, a proper part of the masthead */
+/* Translator credit — compact card in the masthead */
 .credit {
-  display: grid; justify-items: center; gap: .3rem;
+  display: grid; justify-items: center; gap: .2rem;
   margin: 0 auto 2rem;
-  padding: 1.4rem 1.75rem;
-  border: 1px solid var(--night-3); border-radius: 14px;
+  padding: .9rem 1.4rem;
+  border: 1px solid var(--night-3); border-radius: 12px;
   background: var(--night-2);
-  max-width: 30rem;
+  max-width: 24rem;
 }
 .credit__label {
   font-family: var(--verse); font-style: italic;
-  font-size: .95rem; color: var(--slate);
+  font-size: .82rem; color: var(--slate);
 }
 .credit__name {
   font-family: var(--display); font-weight: 500;
-  font-size: clamp(1.5rem, 4.5vw, 2rem); line-height: 1.1;
+  font-size: clamp(1.15rem, 3.2vw, 1.45rem); line-height: 1.1;
   color: var(--parchment);
 }
 .credit__org {
-  font-family: var(--body); font-size: 1rem; color: var(--warm);
-  margin-top: .15rem;
+  font-family: var(--body); font-size: .85rem; color: var(--warm);
+  margin-top: .1rem;
 }
 /* The six Books, as a calm list of cards */
 .books {
@@ -242,6 +245,25 @@ a { color: inherit; text-decoration: none; }
   .book { grid-template-columns: 2.75rem 1fr; gap: 1rem; padding: 1.15rem; }
   .book__num { width: 2.6rem; height: 2.6rem; font-size: 1rem; }
   .book__status { grid-column: 2; margin-top: .4rem; }
+}
+
+/* Publisher colophon — Al Ghazali Institute imprint & copyright */
+.publisher {
+  text-align: center; margin: clamp(3rem, 7vw, 4.5rem) auto 0;
+  max-width: 34rem; display: grid; justify-items: center; gap: .3rem;
+}
+.publisher__mark { color: var(--warm); font-size: .9rem; margin-bottom: .75rem; }
+.publisher__by {
+  margin: 0; font-family: var(--verse); font-style: italic;
+  font-size: 1.05rem; color: var(--cream-dim);
+}
+.publisher__by b { font-style: normal; color: var(--parchment); font-weight: 500; }
+.publisher__where {
+  margin: 0; font-family: var(--body); font-size: .9rem; color: var(--warm);
+}
+.publisher__legal {
+  margin: 1rem 0 0; font-family: var(--body); font-size: .75rem; line-height: 1.6;
+  color: var(--slate-dim); max-width: 30rem;
 }
 
 /* ==========================================================================
@@ -564,6 +586,15 @@ a { color: inherit; text-decoration: none; }
   flex: 0 0 auto;
 }
 .drawer__label { font-family: var(--display); font-size: 1.25rem; color: var(--parchment); }
+.drawer__actions { display: flex; align-items: center; gap: .5rem; }
+.drawer__home {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--body); font-size: .9rem; color: var(--slate);
+  padding: .35rem .6rem; border-radius: 999px;
+  border: 1px solid var(--night-3);
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.drawer__home:hover, .drawer__home:focus-visible { color: var(--warm); border-color: var(--warm); }
 .drawer__close {
   background: none; border: none; color: var(--slate); cursor: pointer;
   padding: .35rem; display: inline-flex; border-radius: 8px;

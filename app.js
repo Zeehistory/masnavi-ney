@@ -20,6 +20,7 @@
     drawerSearch: document.getElementById("drawerSearch"),
     openDrawer: document.getElementById("openDrawer"),
     closeDrawer: document.getElementById("closeDrawer"),
+    drawerHome: document.getElementById("drawerHome"),
     // Rumi modal
     rumiBtn: document.getElementById("rumiBtn"),
     rumiModal: document.getElementById("rumiModal"),
@@ -460,6 +461,7 @@
   el.openDrawer.addEventListener("click", openDrawer);
   el.closeDrawer.addEventListener("click", closeDrawer);
   el.drawerScrim.addEventListener("click", closeDrawer);
+  el.drawerHome.addEventListener("click", closeDrawer);
   el.rumiBtn.addEventListener("click", openRumi);
   el.rumiClose.addEventListener("click", closeRumi);
   el.rumiScrim.addEventListener("click", closeRumi);
