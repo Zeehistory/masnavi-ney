@@ -227,7 +227,20 @@ a { color: inherit; text-decoration: none; }
 .contents {
   position: relative; z-index: 1;
   max-width: 60rem; margin: 0 auto;
-  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 2rem) 8rem;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 5vw, 2.5rem) 8rem;
+}
+/* Calm bed behind the chapter list so the girih never crosses the titles;
+   feathered sides keep the pattern alive in the margins. */
+.contents::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0;
+  left: clamp(-1.5rem, -3vw, -.5rem); right: clamp(-1.5rem, -3vw, -.5rem);
+  background: var(--night);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+@media (max-width: 900px) {
+  .contents::before { left: 0; right: 0; mask-image: none; -webkit-mask-image: none; }
 }
 .contents__head {
   display: grid; gap: 1.1rem; margin-bottom: clamp(2rem,5vw,3rem);
